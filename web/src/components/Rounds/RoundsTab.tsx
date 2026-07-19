@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { GameRecord, Round } from '../../storage/types';
 import { useToast } from '../../context/ToastContext';
 import { ScoreField } from './ScoreField';
+import { NumericKeypad } from './NumericKeypad';
 import { WinnerSelect } from './WinnerSelect';
 import { RoundHistory } from './RoundHistory';
 
@@ -15,6 +16,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
   const { notify } = useToast();
   const [scores, setScores] = useState<Record<string, string>>({});
   const [winnerId, setWinnerId] = useState('');
+  const [activeField, setActiveField] = useState<string | null>(null);
 
   useEffect(() => {
     resetInputs();
@@ -29,6 +31,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
     });
     setScores(next);
     setWinnerId('');
+    setActiveField(null);
   }
 
   if (!game.players.length) {
@@ -82,10 +85,20 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
               key={p.id}
               name={p.name}
               value={scores[p.id] ?? '0'}
-              onChange={(v) => setScores((prev) => ({ ...prev, [p.id]: v }))}
+              active={activeField === p.id}
+              onActivate={() => setActiveField(p.id)}
             />
           ))}
         </div>
+
+        {activeField && (
+          <NumericKeypad
+            label={game.players.find((p) => p.id === activeField)?.name ?? ''}
+            value={scores[activeField] ?? '0'}
+            onChange={(v) => setScores((prev) => ({ ...prev, [activeField]: v }))}
+            onDone={() => setActiveField(null)}
+          />
+        )}
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button type="button" className="btn btn-primary" onClick={handleSubmit}>

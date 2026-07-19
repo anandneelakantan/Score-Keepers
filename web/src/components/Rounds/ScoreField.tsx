@@ -1,21 +1,24 @@
 interface ScoreFieldProps {
   name: string;
   value: string;
-  onChange: (value: string) => void;
+  active: boolean;
+  onActivate: () => void;
 }
 
-export function ScoreField({ name, value, onChange }: ScoreFieldProps) {
+export function ScoreField({ name, value, active, onActivate }: ScoreFieldProps) {
   return (
     <div className="score-field">
       <div className="score-field-name" title={name}>
         {name}
       </div>
       <input
-        className="score-input"
-        type="number"
-        step="any"
+        className={`score-input${active ? ' score-input-active' : ''}`}
+        type="text"
+        inputMode="none"
+        readOnly
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onFocus={onActivate}
+        onClick={onActivate}
       />
     </div>
   );

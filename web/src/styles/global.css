@@ -348,10 +348,97 @@ header {
   font-size: 14px;
   font-family: 'DM Mono', monospace;
   outline: none;
+  cursor: pointer;
+  caret-color: transparent;
   transition: border-color .2s;
 }
 
-.score-input:focus { border-color: var(--accent); }
+.score-input:focus,
+.score-input-active {
+  border-color: var(--accent);
+}
+
+/* NUMERIC KEYPAD */
+.keypad-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9998;
+}
+
+.keypad {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+  box-shadow: 0 -8px 32px var(--shadow);
+  animation: keypadIn .2s ease;
+}
+
+@keyframes keypadIn {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.keypad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.keypad-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.keypad-key {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 0;
+  font-size: 18px;
+  font-family: 'DM Mono', monospace;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+.keypad-key:hover { border-color: var(--accent); }
+.keypad-key:active { background: var(--border); }
+
+.keypad-key-func {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.keypad-key-wide { grid-column: span 2; }
+
+.keypad-key-done {
+  grid-column: span 2;
+  background: var(--accent);
+  color: #0a0a0f;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.keypad-key-done:hover { opacity: .9; }
 
 /* WINNER SELECT */
 .winner-row {
