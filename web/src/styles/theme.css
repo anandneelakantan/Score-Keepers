@@ -1,0 +1,90 @@
+/* ── DARK THEME (default) ── */
+:root,
+[data-theme="dark"] {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c28;
+  --border: #2a2a3d;
+  --accent: #f0c040;
+  --accent2: #e06060;
+  --accent3: #50d0a0;
+  --text: #e8e8f0;
+  --muted: #6a6a8a;
+  --up: #50d0a0;
+  --down: #e06060;
+  --same: #6a6a8a;
+  --shadow: rgba(0,0,0,0.4);
+  --lb-bg-gradient-a: #1c1c28;
+  --lb-bg-gradient-b: #13131a;
+  --lb-th-bg: rgba(0,0,0,0.2);
+  --lb-row-hover: rgba(255,255,255,0.02);
+  --noise-opacity: 0.5;
+}
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg: #f4f3ee;
+  --surface: #ffffff;
+  --surface2: #eeede8;
+  --border: #d8d6cc;
+  --accent: #c89a00;
+  --accent2: #c0404040;
+  --accent3: #20906a;
+  --text: #1a1a2a;
+  --muted: #8a8878;
+  --up: #20906a;
+  --down: #c04040;
+  --same: #8a8878;
+  --shadow: rgba(0,0,0,0.12);
+  --lb-bg-gradient-a: #f0efe9;
+  --lb-bg-gradient-b: #ffffff;
+  --lb-th-bg: rgba(0,0,0,0.04);
+  --lb-row-hover: rgba(0,0,0,0.02);
+  --noise-opacity: 0.2;
+}
+
+/* ── AUTO: follow OS preference ── */
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] {
+    --bg: #f4f3ee;
+    --surface: #ffffff;
+    --surface2: #eeede8;
+    --border: #d8d6cc;
+    --accent: #c89a00;
+    --accent2: #c04040;
+    --accent3: #20906a;
+    --text: #1a1a2a;
+    --muted: #8a8878;
+    --up: #20906a;
+    --down: #c04040;
+    --same: #8a8878;
+    --shadow: rgba(0,0,0,0.12);
+    --lb-bg-gradient-a: #f0efe9;
+    --lb-bg-gradient-b: #ffffff;
+    --lb-th-bg: rgba(0,0,0,0.04);
+    --lb-row-hover: rgba(0,0,0,0.02);
+    --noise-opacity: 0.2;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #f0c040;
+    --accent2: #e06060;
+    --accent3: #50d0a0;
+    --text: #e8e8f0;
+    --muted: #6a6a8a;
+    --up: #50d0a0;
+    --down: #e06060;
+    --same: #6a6a8a;
+    --shadow: rgba(0,0,0,0.4);
+    --lb-bg-gradient-a: #1c1c28;
+    --lb-bg-gradient-b: #13131a;
+    --lb-th-bg: rgba(0,0,0,0.2);
+    --lb-row-hover: rgba(255,255,255,0.02);
+    --noise-opacity: 0.5;
+  }
+}
