@@ -31,5 +31,26 @@ export async function goToTab(page: Page, label: 'Game setup' | 'Rounds' | 'Lead
 }
 
 export async function fillScore(page: Page, playerName: string, value: string) {
-  await page.locator('.score-field', { hasText: playerName }).locator('input').fill(value);
+  await page.locator('.score-field', { hasText: playerName }).locator('input').click();
+
+  const keypad = page.locator('.keypad');
+  await keypad.waitFor({ state: 'visible' });
+
+  const valueDisplay = keypad.locator('.keypad-value');
+  while ((await valueDisplay.textContent())?.trim() !== '0') {
+    await keypad.getByRole('button', { name: '⌫' }).click();
+  }
+
+  const negative = value.startsWith('-');
+  const digits = negative ? value.slice(1) : value;
+
+  if (negative) {
+    await keypad.getByRole('button', { name: '+/-' }).click();
+  }
+
+  for (const digit of digits) {
+    await keypad.getByRole('button', { name: digit, exact: true }).click();
+  }
+
+  await keypad.getByRole('button', { name: 'Done' }).click();
 }
