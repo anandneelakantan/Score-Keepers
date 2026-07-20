@@ -46,7 +46,7 @@ export function GameListItem({ game, onOpen, onRename, onDelete }: GameListItemP
           {new Date(game.updatedAt).toLocaleString()}
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button type="button" className="btn btn-primary" onClick={onOpen}>
           Open
         </button>

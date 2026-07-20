@@ -35,7 +35,8 @@ body::before {
 header {
   display: flex;
   align-items: flex-end;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 12px 20px;
   margin-bottom: 40px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 24px;
@@ -75,6 +76,7 @@ header {
 
 .tab {
   padding: 9px 22px;
+  min-height: 44px;
   border-radius: 7px;
   font-size: 13px;
   font-weight: 500;
@@ -201,6 +203,7 @@ header {
 
 .toggle-btn {
   padding: 8px 16px;
+  min-height: 40px;
   background: none;
   border: none;
   color: var(--muted);
@@ -212,6 +215,7 @@ header {
   transition: all .2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -279,6 +283,7 @@ header {
 
 .btn {
   padding: 9px 20px;
+  min-height: 44px;
   border-radius: 8px;
   border: none;
   font-size: 13px;
@@ -287,6 +292,9 @@ header {
   font-family: 'DM Sans', sans-serif;
   transition: all .15s;
   letter-spacing: .3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary {
@@ -661,6 +669,10 @@ select option { background: var(--surface2); }
   font-size: 15px;
   font-weight: 600;
   letter-spacing: .3px;
+  max-width: 45vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lb-score {
@@ -763,8 +775,10 @@ select option { background: var(--surface2); }
 .theme-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   padding: 6px 11px;
+  min-height: 40px;
   border-radius: 5px;
   background: none;
   border: none;
@@ -785,11 +799,26 @@ select option { background: var(--surface2); }
   box-shadow: 0 1px 4px var(--shadow);
 }
 
+/* TABLET */
+@media (max-width: 860px) {
+  .container { padding: 24px 16px 48px; }
+  .logo { font-size: 46px; }
+}
+
+/* PHONE */
 @media (max-width: 600px) {
   .logo { font-size: 38px; }
   .score-grid { grid-template-columns: 1fr 1fr; }
   .player-grid { grid-template-columns: 1fr 1fr; }
   .lb-table td { padding: 10px 12px; }
   .lb-table th { padding: 10px 12px; }
+  .lb-name { max-width: 32vw; }
   .theme-btn span:not(.theme-icon) { display: none; }
+}
+
+@media (max-width: 400px) {
+  .lb-table th:nth-child(2),
+  .lb-table td:nth-child(2) {
+    display: none;
+  }
 }
