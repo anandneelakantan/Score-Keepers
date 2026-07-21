@@ -83,6 +83,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
           {game.players.map((p) => (
             <ScoreField
               key={p.id}
+              playerId={p.id}
               name={p.name}
               value={scores[p.id] ?? '0'}
               active={activeField === p.id}
@@ -93,6 +94,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
 
         {activeField && (
           <NumericKeypad
+            playerId={activeField}
             label={game.players.find((p) => p.id === activeField)?.name ?? ''}
             value={scores[activeField] ?? '0'}
             onChange={(v) => setScores((prev) => ({ ...prev, [activeField]: v }))}

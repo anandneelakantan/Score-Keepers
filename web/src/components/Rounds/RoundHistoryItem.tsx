@@ -16,7 +16,12 @@ export function RoundHistoryItem({ round, roundNum, players }: RoundHistoryItemP
       <span className="round-entry-num">RD {roundNum}</span>
       <div className="round-scores-chips">
         {Object.entries(round.scores).map(([playerId, score]) => (
-          <ScoreChip key={playerId} name={nameById.get(playerId) || '?'} score={score} />
+          <ScoreChip
+            key={playerId}
+            playerId={playerId}
+            name={nameById.get(playerId) || '?'}
+            score={score}
+          />
         ))}
       </div>
       {winnerName && <span className="round-winner-badge">🏅 {winnerName}</span>}

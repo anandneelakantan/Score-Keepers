@@ -1,11 +1,14 @@
+import { PlayerAvatar } from '../PlayerAvatar';
+
 interface NumericKeypadProps {
+  playerId: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
   onDone: () => void;
 }
 
-export function NumericKeypad({ label, value, onChange, onDone }: NumericKeypadProps) {
+export function NumericKeypad({ playerId, label, value, onChange, onDone }: NumericKeypadProps) {
   const pressDigit = (d: string) => {
     if (value === '0' || value === '-0') {
       onChange(value.startsWith('-') ? `-${d}` : d);
@@ -32,7 +35,10 @@ export function NumericKeypad({ label, value, onChange, onDone }: NumericKeypadP
     <div className="keypad-backdrop" onClick={onDone}>
       <div className="keypad" onClick={(e) => e.stopPropagation()}>
         <div className="keypad-header">
-          <span>Score for {label}</span>
+          <span className="keypad-header-label">
+            <PlayerAvatar name={label} colorKey={playerId} size={20} />
+            Score for {label}
+          </span>
           <span className="keypad-value">{value}</span>
         </div>
         <div className="keypad-grid">

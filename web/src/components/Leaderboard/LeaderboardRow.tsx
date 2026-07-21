@@ -1,4 +1,5 @@
 import type { LeaderboardRowData } from '../../hooks/useLeaderboard';
+import { PlayerAvatar } from '../PlayerAvatar';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
@@ -46,7 +47,8 @@ export function LeaderboardRow({ row }: { row: LeaderboardRowData }) {
       <td>{moveNode}</td>
       <td>
         <div className="lb-name">
-          {player.name}
+          <PlayerAvatar name={player.name} colorKey={player.id} size={24} />
+          <span className="lb-name-text">{player.name}</span>
           {rank <= 3 && <span className="lb-medal">{MEDALS[rank - 1]}</span>}
         </div>
         {wins > 0 && (

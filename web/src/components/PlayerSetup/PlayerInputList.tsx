@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PlayerAvatar } from '../PlayerAvatar';
 
 interface PlayerInputListProps {
   initialNames?: string[];
@@ -42,7 +43,11 @@ export function PlayerInputList({ initialNames = [], onApply }: PlayerInputListP
       <div className="player-grid">
         {inputs.map((val, i) => (
           <div className="player-input-wrap" key={i}>
-            <span className="player-num">{i + 1}</span>
+            {val.trim() ? (
+              <PlayerAvatar name={val} colorKey={String(i)} size={26} />
+            ) : (
+              <span className="player-avatar player-avatar-empty">{i + 1}</span>
+            )}
             <input
               className="player-input"
               type="text"

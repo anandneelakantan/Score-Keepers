@@ -224,6 +224,32 @@ header {
   color: #0a0a0f;
 }
 
+/* PLAYER AVATAR */
+.player-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+.player-avatar-empty {
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-shadow: none;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+}
+
 /* PLAYER GRID */
 .player-grid {
   display: grid;
@@ -232,23 +258,14 @@ header {
 }
 
 .player-input-wrap {
-  position: relative;
-}
-
-.player-num {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .player-input {
   width: 100%;
-  padding: 10px 10px 10px 32px;
+  padding: 10px;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -335,6 +352,9 @@ header {
 }
 
 .score-field-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 600;
   color: var(--muted);
@@ -342,6 +362,10 @@ header {
   text-transform: uppercase;
   letter-spacing: .8px;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.score-field-name span {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -401,6 +425,12 @@ header {
   margin-bottom: 14px;
   font-size: 13px;
   color: var(--muted);
+}
+
+.keypad-header-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .keypad-value {
@@ -481,6 +511,45 @@ select {
 select:focus { border-color: var(--accent); }
 select option { background: var(--surface2); }
 
+.winner-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.winner-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.winner-option:hover { border-color: var(--accent); }
+
+.winner-option.active {
+  border-color: var(--accent);
+  background: rgba(240,192,64,0.12);
+  color: var(--accent);
+}
+
+.winner-option-none {
+  padding: 6px 12px;
+  color: var(--muted);
+}
+
+.winner-option-none.active {
+  color: var(--accent);
+}
+
 /* ROUNDS HISTORY */
 .rounds-list {
   display: flex;
@@ -523,6 +592,9 @@ select option { background: var(--surface2); }
 }
 
 .score-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 5px;
@@ -666,9 +738,15 @@ select option { background: var(--surface2); }
 .move-new { color: var(--accent); }
 
 .lb-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: .3px;
+}
+
+.lb-name-text {
   max-width: 45vw;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -812,7 +890,7 @@ select option { background: var(--surface2); }
   .player-grid { grid-template-columns: 1fr 1fr; }
   .lb-table td { padding: 10px 12px; }
   .lb-table th { padding: 10px 12px; }
-  .lb-name { max-width: 32vw; }
+  .lb-name-text { max-width: 32vw; }
   .theme-btn span:not(.theme-icon) { display: none; }
 }
 

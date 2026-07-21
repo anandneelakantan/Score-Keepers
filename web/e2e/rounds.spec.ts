@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test('submits a round with a winner and shows it in history', async ({ page }) => {
   await fillScore(page, 'Alice', '10');
   await fillScore(page, 'Bob', '7');
-  await page.locator('select').selectOption({ label: 'Alice' });
+  await page.locator('.winner-picker').getByRole('button', { name: 'Alice' }).click();
   await page.getByRole('button', { name: 'Submit Round ✓' }).click();
 
   await expect(page.getByText('RD 1')).toBeVisible();
@@ -33,7 +33,7 @@ test('undo last round removes it from history', async ({ page }) => {
 test('disabling winner tracking clears winner badges from history', async ({ page }) => {
   await fillScore(page, 'Alice', '5');
   await fillScore(page, 'Bob', '3');
-  await page.locator('select').selectOption({ label: 'Alice' });
+  await page.locator('.winner-picker').getByRole('button', { name: 'Alice' }).click();
   await page.getByRole('button', { name: 'Submit Round ✓' }).click();
   await expect(page.getByText('🏅 Alice')).toBeVisible();
 
