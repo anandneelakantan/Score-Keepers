@@ -775,6 +775,138 @@ select option { background: var(--surface2); }
   margin-top: 2px;
 }
 
+/* WORM CHART */
+.worm-chart-wrap {
+  padding: 18px 24px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.worm-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.worm-chart-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.worm-metric-toggle.toggle-group {
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+
+.worm-metric-toggle .toggle-btn {
+  padding: 4px 12px;
+  min-height: 26px;
+  font-size: 10px;
+  letter-spacing: .5px;
+}
+
+.worm-chart-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.worm-chart {
+  display: block;
+}
+
+.worm-grid-line {
+  stroke: var(--border);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.worm-round-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  fill: var(--muted);
+}
+
+.worm-axis-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  fill: var(--muted);
+}
+
+.worm-label-connector {
+  stroke-width: 1;
+  opacity: 0.45;
+  stroke-dasharray: 2 2;
+}
+
+.worm-line-group {
+  cursor: pointer;
+  transition: opacity .2s ease;
+}
+
+.worm-line-group.worm-dimmed {
+  opacity: 0.25;
+}
+
+.worm-hit-area {
+  stroke: transparent;
+}
+
+.worm-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: wormDraw 900ms cubic-bezier(.22,.61,.36,1) forwards;
+  transition: stroke-width .15s ease;
+}
+
+@keyframes wormDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.worm-point {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wormPointIn 260ms ease forwards;
+}
+
+@keyframes wormPointIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.worm-label {
+  opacity: 0;
+  animation: wormLabelIn 350ms ease forwards;
+}
+
+@keyframes wormLabelIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.worm-label-initial {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  fill: #fff;
+}
+
+.worm-label-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .worm-path { animation: none; stroke-dashoffset: 0; }
+  .worm-point, .worm-label { animation: none; opacity: 1; transform: none; }
+}
+
 /* EMPTY STATE */
 .empty-state {
   text-align: center;

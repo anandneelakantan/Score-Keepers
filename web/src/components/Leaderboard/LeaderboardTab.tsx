@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import type { GameRecord } from '../../storage/types';
 import { useLeaderboard } from '../../hooks/useLeaderboard';
 import { LeaderboardRow } from './LeaderboardRow';
+import { WormChart } from './WormChart';
 import { ExportImageButton } from '../ExportImageButton';
 
 export function LeaderboardTab({ game }: { game: GameRecord }) {
@@ -39,6 +40,7 @@ export function LeaderboardTab({ game }: { game: GameRecord }) {
           </div>
           <div className="lb-rounds-count">{roundsCountLabel}</div>
         </div>
+        {game.players.length && game.rounds.length ? <WormChart game={game} /> : null}
         <div>
           {!game.players.length || !game.rounds.length ? (
             <div className="empty-state">
