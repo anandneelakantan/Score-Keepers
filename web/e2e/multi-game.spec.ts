@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await resetAppState(page);
 });
 
-test('keeps state isolated across games and supports rename/delete', async ({ page }) => {
+test('keeps state isolated across games and supports delete', async ({ page }) => {
   await createGame(page, 'Game A');
   await setPlayers(page, ['Alice', 'Bob']);
   await goToTab(page, 'Rounds');
@@ -26,9 +26,6 @@ test('keeps state isolated across games and supports rename/delete', async ({ pa
   await page.getByRole('button', { name: 'My Games' }).click();
   await expect(page.getByTestId('game-list-item')).toHaveCount(2);
 
-  // Filter by the data-game-name attribute (not text content): once "Rename" is
-  // clicked, the name <div> is swapped for an <input>, whose value isn't part of
-  // textContent, so a hasText filter would stop matching mid-edit.
   const gameAItem = page.locator('[data-testid="game-list-item"][data-game-name="Game A"]');
   const gameBItem = page.locator('[data-testid="game-list-item"][data-game-name="Game B"]');
 
@@ -38,13 +35,6 @@ test('keeps state isolated across games and supports rename/delete', async ({ pa
   await expect(page.getByText('Alice: +10')).toBeVisible();
 
   await page.getByRole('button', { name: 'My Games' }).click();
-  await gameAItem.getByRole('button', { name: 'Rename' }).click();
-  await gameAItem.locator('input').fill('Game A Renamed');
-  await gameAItem.locator('input').press('Enter');
-  await expect(
-    page.locator('[data-testid="game-list-item"][data-game-name="Game A Renamed"]'),
-  ).toBeVisible();
-
   await gameBItem.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByTestId('game-list-item')).toHaveCount(1);
 });

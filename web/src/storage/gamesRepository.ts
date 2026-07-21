@@ -33,13 +33,6 @@ export async function saveGame(game: GameRecord): Promise<void> {
   await db.put(GAMES_STORE, { ...game, updatedAt: Date.now() });
 }
 
-export async function renameGame(id: string, name: string): Promise<void> {
-  const db = await getDb();
-  const game = await db.get(GAMES_STORE, id);
-  if (!game) return;
-  await db.put(GAMES_STORE, { ...game, name: name.trim() || game.name, updatedAt: Date.now() });
-}
-
 export async function deleteGame(id: string): Promise<void> {
   const db = await getDb();
   await db.delete(GAMES_STORE, id);

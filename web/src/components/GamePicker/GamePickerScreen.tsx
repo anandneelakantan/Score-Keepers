@@ -1,12 +1,10 @@
 import { useGames } from '../../context/GameContext';
-import { useToast } from '../../context/ToastContext';
-import { createGame, deleteGame, renameGame } from '../../storage/gamesRepository';
+import { createGame, deleteGame } from '../../storage/gamesRepository';
 import { GameListItem } from './GameListItem';
 import { NewGameDialog } from './NewGameDialog';
 
 export function GamePickerScreen() {
   const { games, refreshGames, setActiveGameId } = useGames();
-  const { notify } = useToast();
 
   const handleCreate = async (name: string) => {
     const game = await createGame(name);
@@ -17,12 +15,6 @@ export function GamePickerScreen() {
   const handleDelete = async (id: string) => {
     await deleteGame(id);
     await refreshGames();
-  };
-
-  const handleRename = async (id: string, name: string) => {
-    await renameGame(id, name);
-    await refreshGames();
-    notify('Game renamed.');
   };
 
   return (
@@ -51,7 +43,6 @@ export function GamePickerScreen() {
               key={g.id}
               game={g}
               onOpen={() => setActiveGameId(g.id)}
-              onRename={(name) => handleRename(g.id, name)}
               onDelete={() => handleDelete(g.id)}
             />
           ))}
