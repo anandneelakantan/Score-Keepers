@@ -1,4 +1,4 @@
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import type { RefObject } from 'react';
 import type { GameRecord } from '../storage/types';
 import { useTheme } from '../context/ThemeContext';
@@ -34,10 +34,28 @@ export function ExportImageButton({ captureRef, game }: ExportImageButtonProps) 
         useCORS: true,
         logging: false,
       });
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('toBlob failed');
+
+      const filename = `leaderboard_round${game.rounds.length}.png`;
+      const file = new File([blob], filename, { type: 'image/png' });
+
+      if (navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: game.name });
+          notify('✓ Shared!');
+        } catch (err) {
+          if ((err as Error).name !== 'AbortError') notify('Share failed. Try again.');
+        }
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `leaderboard_round${game.rounds.length}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = filename;
+      link.href = url;
       link.click();
+      URL.revokeObjectURL(url);
       notify('✓ Image downloaded!');
     } catch {
       notify('Export failed. Try again.');
