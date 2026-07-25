@@ -8,9 +8,15 @@ export interface Round {
   winnerId?: string;
 }
 
+export interface TimerSettings {
+  enabled: boolean;
+  seconds: number;
+}
+
 export interface GameSettings {
   rankDir: 'high' | 'low';
   trackWinner: boolean;
+  timer: TimerSettings;
 }
 
 export interface GameRecord {

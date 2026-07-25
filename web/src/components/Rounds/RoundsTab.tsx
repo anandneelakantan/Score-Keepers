@@ -5,6 +5,7 @@ import { ScoreField } from './ScoreField';
 import { NumericKeypad } from './NumericKeypad';
 import { WinnerSelect } from './WinnerSelect';
 import { RoundHistory } from './RoundHistory';
+import { RoundTimer } from './RoundTimer';
 
 interface RoundsTabProps {
   game: GameRecord;
@@ -74,6 +75,14 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
           <div className="round-badge">Round {roundNum}</div>
           <div style={{ color: 'var(--muted)', fontSize: 12 }}>Enter scores for each player</div>
         </div>
+
+        {game.settings.timer.enabled && (
+          <RoundTimer
+            key={roundNum}
+            seconds={game.settings.timer.seconds}
+            onExpire={() => notify("⏰ Time's up!")}
+          />
+        )}
 
         {game.settings.trackWinner && (
           <WinnerSelect players={game.players} value={winnerId} onChange={setWinnerId} />

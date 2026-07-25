@@ -8,6 +8,8 @@ type Action =
   | { type: 'SET_NAME'; name: string }
   | { type: 'SET_RANK_DIR'; dir: GameSettings['rankDir'] }
   | { type: 'SET_TRACK_WINNER'; enabled: boolean }
+  | { type: 'SET_TIMER_ENABLED'; enabled: boolean }
+  | { type: 'SET_TIMER_SECONDS'; seconds: number }
   | { type: 'APPLY_PLAYERS'; players: Player[] }
   | { type: 'ADD_ROUND'; round: Round }
   | { type: 'UNDO_ROUND' };
@@ -29,6 +31,16 @@ function reducer(game: GameRecord | null, action: Action): GameRecord | null {
         : game.rounds.map((r) => ({ ...r, winnerId: undefined }));
       return { ...game, settings: { ...game.settings, trackWinner }, rounds };
     }
+    case 'SET_TIMER_ENABLED':
+      return {
+        ...game,
+        settings: { ...game.settings, timer: { ...game.settings.timer, enabled: action.enabled } },
+      };
+    case 'SET_TIMER_SECONDS':
+      return {
+        ...game,
+        settings: { ...game.settings, timer: { ...game.settings.timer, seconds: action.seconds } },
+      };
     case 'APPLY_PLAYERS':
       return { ...game, players: action.players, rounds: [] };
     case 'ADD_ROUND':

@@ -336,6 +336,67 @@ header {
 }
 .btn-danger:hover { background: var(--accent2); color: #fff; }
 
+/* ROUND TIMER */
+.round-timer {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.round-timer-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.round-timer-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.round-timer-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.round-timer-track {
+  height: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.round-timer-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 1s linear;
+}
+
+.round-timer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.round-timer-expired .round-timer-value {
+  color: var(--accent2);
+}
+
+.round-timer-expired .round-timer-fill {
+  background: var(--accent2);
+}
+
 /* SCORE GRID */
 .score-grid {
   display: grid;

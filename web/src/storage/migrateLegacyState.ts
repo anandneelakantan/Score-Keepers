@@ -67,6 +67,7 @@ export async function migrateLegacyStateIfNeeded(): Promise<string | null> {
       settings: {
         rankDir: legacy.rankDir === 'low' ? 'low' : 'high',
         trackWinner: legacy.trackWinner !== false,
+        timer: { enabled: false, seconds: 30 },
       },
     };
 

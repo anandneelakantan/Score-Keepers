@@ -2,11 +2,15 @@ import { useToast } from '../../context/ToastContext';
 import type { GameRecord, GameSettings } from '../../storage/types';
 import { PlayerInputList } from './PlayerInputList';
 
+const TIMER_PRESETS = [6, 30, 60];
+
 interface PlayerSetupProps {
   game: GameRecord;
   onChangeName: (name: string) => void;
   onChangeRankDir: (dir: GameSettings['rankDir']) => void;
   onChangeTrackWinner: (enabled: boolean) => void;
+  onChangeTimerEnabled: (enabled: boolean) => void;
+  onChangeTimerSeconds: (seconds: number) => void;
   onApplyPlayers: (names: string[]) => void;
 }
 
@@ -15,6 +19,8 @@ export function PlayerSetup({
   onChangeName,
   onChangeRankDir,
   onChangeTrackWinner,
+  onChangeTimerEnabled,
+  onChangeTimerSeconds,
   onApplyPlayers,
 }: PlayerSetupProps) {
   const { notify } = useToast();
@@ -85,6 +91,50 @@ export function PlayerSetup({
             Track round winner
           </label>
         </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">Round timer</div>
+        <div className="settings-row" style={{ marginBottom: game.settings.timer.enabled ? 14 : 0 }}>
+          <label className="toggle-switch">
+            <input
+              type="checkbox"
+              checked={game.settings.timer.enabled}
+              onChange={(e) => onChangeTimerEnabled(e.target.checked)}
+            />
+            <span className="toggle-slider"></span>
+            Time each round (e.g. 6-second scribble)
+          </label>
+        </div>
+        {game.settings.timer.enabled && (
+          <div className="settings-row">
+            <span className="setting-label">Duration</span>
+            <div className="toggle-group">
+              {TIMER_PRESETS.map((secs) => (
+                <button
+                  key={secs}
+                  type="button"
+                  className={`toggle-btn${game.settings.timer.seconds === secs ? ' active' : ''}`}
+                  onClick={() => onChangeTimerSeconds(secs)}
+                >
+                  {secs}s
+                </button>
+              ))}
+            </div>
+            <input
+              className="player-input"
+              style={{ width: 90 }}
+              type="number"
+              min={1}
+              max={3600}
+              value={game.settings.timer.seconds}
+              onChange={(e) => {
+                const val = Math.max(1, Math.min(3600, parseInt(e.target.value, 10) || 1));
+                onChangeTimerSeconds(val);
+              }}
+            />
+          </div>
+        )}
       </div>
 
       <PlayerInputList

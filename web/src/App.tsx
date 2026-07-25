@@ -53,6 +53,8 @@ function GameShell() {
             onChangeName={(name) => dispatch({ type: 'SET_NAME', name })}
             onChangeRankDir={(dir) => dispatch({ type: 'SET_RANK_DIR', dir })}
             onChangeTrackWinner={(enabled) => dispatch({ type: 'SET_TRACK_WINNER', enabled })}
+            onChangeTimerEnabled={(enabled) => dispatch({ type: 'SET_TIMER_ENABLED', enabled })}
+            onChangeTimerSeconds={(seconds) => dispatch({ type: 'SET_TIMER_SECONDS', seconds })}
             onApplyPlayers={(names) =>
               dispatch({
                 type: 'APPLY_PLAYERS',
