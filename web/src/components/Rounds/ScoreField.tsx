@@ -3,16 +3,17 @@ import { PlayerAvatar } from '../PlayerAvatar';
 interface ScoreFieldProps {
   playerId: string;
   name: string;
+  emoji?: string;
   value: string;
   active: boolean;
   onActivate: () => void;
 }
 
-export function ScoreField({ playerId, name, value, active, onActivate }: ScoreFieldProps) {
+export function ScoreField({ playerId, name, emoji, value, active, onActivate }: ScoreFieldProps) {
   return (
     <div className="score-field">
       <div className="score-field-name" title={name}>
-        <PlayerAvatar name={name} colorKey={playerId} size={20} />
+        <PlayerAvatar name={name} colorKey={playerId} emoji={emoji} size={20} />
         <span>{name}</span>
       </div>
       <input

@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
 import { PlayerAvatar } from '../PlayerAvatar';
 
 interface NumericKeypadProps {
   playerId: string;
   label: string;
+  emoji?: string;
   value: string;
   onChange: (value: string) => void;
   onDone: () => void;
 }
 
-export function NumericKeypad({ playerId, label, value, onChange, onDone }: NumericKeypadProps) {
+export function NumericKeypad({ playerId, label, emoji, value, onChange, onDone }: NumericKeypadProps) {
   const pressDigit = (d: string) => {
     if (value === '0' || value === '-0') {
       onChange(value.startsWith('-') ? `-${d}` : d);
@@ -31,12 +33,36 @@ export function NumericKeypad({ playerId, label, value, onChange, onDone }: Nume
     onChange(value.startsWith('-') ? value.slice(1) : `-${value}`);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        pressDigit(e.key);
+      } else if (e.key === 'Backspace' || e.key === 'Delete') {
+        e.preventDefault();
+        pressBackspace();
+      } else if (e.key === '.') {
+        e.preventDefault();
+        pressDecimal();
+      } else if (e.key === '-') {
+        e.preventDefault();
+        pressToggleSign();
+      } else if (e.key === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        onDone();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   return (
     <div className="keypad-backdrop" onClick={onDone}>
       <div className="keypad" onClick={(e) => e.stopPropagation()}>
         <div className="keypad-header">
           <span className="keypad-header-label">
-            <PlayerAvatar name={label} colorKey={playerId} size={20} />
+            <PlayerAvatar name={label} colorKey={playerId} emoji={emoji} size={20} />
             Score for {label}
           </span>
           <span className="keypad-value">{value}</span>

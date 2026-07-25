@@ -105,6 +105,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
                   key={p.id}
                   playerId={p.id}
                   name={p.name}
+                  emoji={p.emoji}
                   value={scores[p.id] ?? '0'}
                   active={activeField === p.id}
                   onActivate={() => setActiveField(p.id)}
@@ -116,6 +117,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
               <NumericKeypad
                 playerId={activeField}
                 label={game.players.find((p) => p.id === activeField)?.name ?? ''}
+                emoji={game.players.find((p) => p.id === activeField)?.emoji}
                 value={scores[activeField] ?? '0'}
                 onChange={(v) => setScores((prev) => ({ ...prev, [activeField]: v }))}
                 onDone={() => setActiveField(null)}

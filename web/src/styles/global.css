@@ -861,6 +861,17 @@ select option { background: var(--surface2); }
 .undo-callout-title { font-size: 13px; font-weight: 600; }
 .undo-callout-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
+/* GAME PICKER (My Games list) */
+.round-entry {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.round-entry:last-child { border-bottom: none; }
+
 /* LEADERBOARD */
 #leaderboard-capture {
   background: var(--surface);
