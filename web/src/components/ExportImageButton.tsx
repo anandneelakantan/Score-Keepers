@@ -25,7 +25,7 @@ export function ExportImageButton({ captureRef, game }: ExportImageButtonProps) 
     if (effectiveTheme === 'auto') {
       effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    const bgColor = effectiveTheme === 'light' ? '#ffffff' : '#13131a';
+    const bgColor = effectiveTheme === 'light' ? '#ffffff' : '#0d0d13';
 
     try {
       const canvas = await html2canvas(captureRef.current, {

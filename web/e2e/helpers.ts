@@ -45,7 +45,7 @@ export async function fillScore(page: Page, playerName: string, value: string) {
   const digits = negative ? value.slice(1) : value;
 
   if (negative) {
-    await keypad.getByRole('button', { name: '+/-' }).click();
+    await keypad.getByRole('button', { name: '±' }).click();
   }
 
   for (const digit of digits) {

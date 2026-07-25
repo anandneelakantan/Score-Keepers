@@ -1,6 +1,7 @@
 export interface Player {
   id: string;
   name: string;
+  emoji?: string;
 }
 
 export interface Round {

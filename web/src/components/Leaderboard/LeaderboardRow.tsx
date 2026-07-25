@@ -1,9 +1,17 @@
+import type { CSSProperties } from 'react';
 import type { LeaderboardRowData } from '../../hooks/useLeaderboard';
 import { PlayerAvatar } from '../PlayerAvatar';
+import { getPlayerColor } from '../../utils/playerColor';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
-export function LeaderboardRow({ row }: { row: LeaderboardRowData }) {
+interface LeaderboardRowProps {
+  row: LeaderboardRowData;
+  recentScores: number[];
+  leaderTotal: number;
+}
+
+export function LeaderboardRow({ row, recentScores, leaderTotal }: LeaderboardRowProps) {
   const { player, rank, prevRank, total, wins } = row;
 
   let moveNode;
@@ -38,26 +46,42 @@ export function LeaderboardRow({ row }: { row: LeaderboardRowData }) {
 
   const rankClass = rank <= 3 ? String(rank) : 'other';
   const scoreStr = total >= 0 ? `+${total}` : `${total}`;
+  const pct = leaderTotal > 0 ? Math.max(4, Math.min(100, (Math.max(0, total) / leaderTotal) * 100)) : 0;
 
   return (
-    <tr className={`lb-row rank-${rankClass}`} style={{ animationDelay: `${(rank - 1) * 50}ms` }}>
-      <td className="lb-rank-cell">
+    <div className={`lb-row rank-${rankClass}`} style={{ animationDelay: `${(rank - 1) * 50}ms` }}>
+      <div className="lb-rank-cell">
         <div className="lb-rank">{rank}</div>
-      </td>
-      <td>{moveNode}</td>
-      <td>
-        <div className="lb-name">
-          <PlayerAvatar name={player.name} colorKey={player.id} size={24} />
+      </div>
+      {moveNode}
+      <PlayerAvatar name={player.name} colorKey={player.id} emoji={player.emoji} size={40} />
+      <div className="lb-name">
+        <div className="lb-name-info">
           <span className="lb-name-text">{player.name}</span>
           {rank <= 3 && <span className="lb-medal">{MEDALS[rank - 1]}</span>}
+          {wins > 0 && (
+            <div className="lb-round-wins">
+              🏅 {wins} round win{wins > 1 ? 's' : ''}
+            </div>
+          )}
+          {recentScores.length > 0 && (
+            <div className="lb-chips">
+              {recentScores.map((s, i) => (
+                <span className="lb-chip" key={i}>
+                  {s >= 0 ? `+${s}` : s}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        {wins > 0 && (
-          <div className="lb-round-wins">
-            🏅 {wins} round win{wins > 1 ? 's' : ''}
-          </div>
-        )}
-      </td>
-      <td className="lb-score">{scoreStr}</td>
-    </tr>
+      </div>
+      <div className="lb-progress-track">
+        <div
+          className="lb-progress-fill"
+          style={{ width: `${pct}%`, '--pa-color': getPlayerColor(player.id) } as CSSProperties}
+        />
+      </div>
+      <div className="lb-score">{scoreStr}</div>
+    </div>
   );
 }

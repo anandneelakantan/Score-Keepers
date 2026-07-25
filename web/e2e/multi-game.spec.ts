@@ -32,7 +32,7 @@ test('keeps state isolated across games and supports delete', async ({ page }) =
   await gameAItem.getByRole('button', { name: 'Open' }).click();
   await goToTab(page, 'Rounds');
   await expect(page.getByText('RD 1')).toBeVisible();
-  await expect(page.getByText('Alice: +10')).toBeVisible();
+  await expect(page.locator('.history-total-cell', { hasText: '10' })).toBeVisible();
 
   await page.getByRole('button', { name: 'My Games' }).click();
   await gameBItem.getByRole('button', { name: 'Delete' }).click();

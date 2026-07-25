@@ -50,7 +50,7 @@ export function NumericKeypad({ playerId, label, value, onChange, onDone }: Nume
           <button type="button" className="keypad-key" onClick={() => pressDigit('4')}>4</button>
           <button type="button" className="keypad-key" onClick={() => pressDigit('5')}>5</button>
           <button type="button" className="keypad-key" onClick={() => pressDigit('6')}>6</button>
-          <button type="button" className="keypad-key keypad-key-func" onClick={pressToggleSign}>+/-</button>
+          <button type="button" className="keypad-key keypad-key-func" onClick={pressToggleSign}>±</button>
 
           <button type="button" className="keypad-key" onClick={() => pressDigit('1')}>1</button>
           <button type="button" className="keypad-key" onClick={() => pressDigit('2')}>2</button>

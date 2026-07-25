@@ -55,10 +55,10 @@ function GameShell() {
             onChangeTrackWinner={(enabled) => dispatch({ type: 'SET_TRACK_WINNER', enabled })}
             onChangeTimerEnabled={(enabled) => dispatch({ type: 'SET_TIMER_ENABLED', enabled })}
             onChangeTimerSeconds={(seconds) => dispatch({ type: 'SET_TIMER_SECONDS', seconds })}
-            onApplyPlayers={(names) =>
+            onApplyPlayers={(players) =>
               dispatch({
                 type: 'APPLY_PLAYERS',
-                players: names.map((name) => ({ id: crypto.randomUUID(), name })),
+                players: players.map((p) => ({ id: crypto.randomUUID(), name: p.name, emoji: p.emoji })),
               })
             }
           />

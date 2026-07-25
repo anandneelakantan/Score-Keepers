@@ -1,8 +1,8 @@
 import { useToast } from '../../context/ToastContext';
 import type { GameRecord, GameSettings } from '../../storage/types';
-import { PlayerInputList } from './PlayerInputList';
+import { PlayerInputList, type PlayerDraft } from './PlayerInputList';
 
-const TIMER_PRESETS = [6, 30, 60];
+const TIMER_PRESETS = [30, 60, 90, 120];
 
 interface PlayerSetupProps {
   game: GameRecord;
@@ -11,7 +11,7 @@ interface PlayerSetupProps {
   onChangeTrackWinner: (enabled: boolean) => void;
   onChangeTimerEnabled: (enabled: boolean) => void;
   onChangeTimerSeconds: (seconds: number) => void;
-  onApplyPlayers: (names: string[]) => void;
+  onApplyPlayers: (players: PlayerDraft[]) => void;
 }
 
 export function PlayerSetup({
@@ -25,18 +25,18 @@ export function PlayerSetup({
 }: PlayerSetupProps) {
   const { notify } = useToast();
 
-  const handleApply = (names: string[]) => {
-    if (names.length < 2) {
+  const handleApply = (players: PlayerDraft[]) => {
+    if (players.length < 2) {
       notify('Add at least 2 players.');
       return;
     }
-    const unique = new Set(names.map((n) => n.toLowerCase()));
-    if (unique.size !== names.length) {
+    const unique = new Set(players.map((p) => p.name.toLowerCase()));
+    if (unique.size !== players.length) {
       notify('Player names must be unique.');
       return;
     }
-    onApplyPlayers(names);
-    notify(`✓ ${names.length} players set. Rounds reset.`);
+    onApplyPlayers(players);
+    notify(`✓ ${players.length} players set. Rounds reset.`);
   };
 
   return (
@@ -103,12 +103,12 @@ export function PlayerSetup({
               onChange={(e) => onChangeTimerEnabled(e.target.checked)}
             />
             <span className="toggle-slider"></span>
-            Time each round (e.g. 6-second scribble)
+            Time each round <span style={{ color: 'var(--muted)', fontWeight: 400 }}>— buzzer opens scoring</span>
           </label>
         </div>
         {game.settings.timer.enabled && (
           <div className="settings-row">
-            <span className="setting-label">Duration</span>
+            <span className="setting-label">Length</span>
             <div className="toggle-group">
               {TIMER_PRESETS.map((secs) => (
                 <button
@@ -117,29 +117,17 @@ export function PlayerSetup({
                   className={`toggle-btn${game.settings.timer.seconds === secs ? ' active' : ''}`}
                   onClick={() => onChangeTimerSeconds(secs)}
                 >
-                  {secs}s
+                  {secs >= 120 && secs % 60 === 0 ? `${secs / 60}m` : `${secs}s`}
                 </button>
               ))}
             </div>
-            <input
-              className="player-input"
-              style={{ width: 90 }}
-              type="number"
-              min={1}
-              max={3600}
-              value={game.settings.timer.seconds}
-              onChange={(e) => {
-                const val = Math.max(1, Math.min(3600, parseInt(e.target.value, 10) || 1));
-                onChangeTimerSeconds(val);
-              }}
-            />
           </div>
         )}
       </div>
 
       <PlayerInputList
         key={game.id}
-        initialNames={game.players.map((p) => p.name)}
+        initialPlayers={game.players.map((p) => ({ name: p.name, emoji: p.emoji }))}
         onApply={handleApply}
       />
     </div>

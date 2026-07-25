@@ -1,10 +1,10 @@
 /* ── DARK THEME (default) ── */
 :root,
 [data-theme="dark"] {
-  --bg: #0a0a0f;
-  --surface: #13131a;
-  --surface2: #1c1c28;
-  --border: #2a2a3d;
+  --bg: #0d0d13;
+  --surface: #16151d;
+  --surface2: #1e1d27;
+  --border: #2c2b38;
   --accent: #f0c040;
   --accent2: #e06060;
   --accent3: #50d0a0;
@@ -14,11 +14,14 @@
   --down: #e06060;
   --same: #6a6a8a;
   --shadow: rgba(0,0,0,0.4);
-  --lb-bg-gradient-a: #1c1c28;
-  --lb-bg-gradient-b: #13131a;
+  --lb-bg-gradient-a: #1e1d27;
+  --lb-bg-gradient-b: #16151d;
   --lb-th-bg: rgba(0,0,0,0.2);
   --lb-row-hover: rgba(255,255,255,0.02);
   --noise-opacity: 0.5;
+  --radius-card: 20px;
+  --radius-btn: 14px;
+  --radius-input: 12px;
 }
 
 /* ── LIGHT THEME ── */

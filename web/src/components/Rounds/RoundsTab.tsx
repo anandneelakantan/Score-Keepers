@@ -18,6 +18,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
   const [scores, setScores] = useState<Record<string, string>>({});
   const [winnerId, setWinnerId] = useState('');
   const [activeField, setActiveField] = useState<string | null>(null);
+  const [timerDone, setTimerDone] = useState(false);
 
   useEffect(() => {
     resetInputs();
@@ -33,6 +34,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
     setScores(next);
     setWinnerId('');
     setActiveField(null);
+    setTimerDone(false);
   }
 
   if (!game.players.length) {
@@ -68,57 +70,68 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
     notify(`✓ Round ${roundNum} submitted!`);
   };
 
+  const showTimer = game.settings.timer.enabled && !timerDone;
+
   return (
     <div>
       <div className="card">
         <div className="round-header">
           <div className="round-badge">Round {roundNum}</div>
-          <div style={{ color: 'var(--muted)', fontSize: 12 }}>Enter scores for each player</div>
+          {!showTimer && (
+            <div style={{ color: 'var(--muted)', fontSize: 12 }}>Enter scores for each player</div>
+          )}
         </div>
 
-        {game.settings.timer.enabled && (
+        {showTimer ? (
           <RoundTimer
             key={roundNum}
             seconds={game.settings.timer.seconds}
-            onExpire={() => notify("⏰ Time's up!")}
+            roundNum={roundNum}
+            onExpire={() => {
+              notify("⏰ Time's up!");
+              setTimerDone(true);
+            }}
+            onSkip={() => setTimerDone(true)}
           />
+        ) : (
+          <>
+            {game.settings.trackWinner && (
+              <WinnerSelect players={game.players} value={winnerId} onChange={setWinnerId} />
+            )}
+
+            <div className="score-grid">
+              {game.players.map((p) => (
+                <ScoreField
+                  key={p.id}
+                  playerId={p.id}
+                  name={p.name}
+                  value={scores[p.id] ?? '0'}
+                  active={activeField === p.id}
+                  onActivate={() => setActiveField(p.id)}
+                />
+              ))}
+            </div>
+
+            {activeField && (
+              <NumericKeypad
+                playerId={activeField}
+                label={game.players.find((p) => p.id === activeField)?.name ?? ''}
+                value={scores[activeField] ?? '0'}
+                onChange={(v) => setScores((prev) => ({ ...prev, [activeField]: v }))}
+                onDone={() => setActiveField(null)}
+              />
+            )}
+
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button type="button" className="btn btn-primary" onClick={handleSubmit}>
+                Submit Round ✓
+              </button>
+              <button type="button" className="btn btn-ghost" onClick={resetInputs}>
+                Clear Scores
+              </button>
+            </div>
+          </>
         )}
-
-        {game.settings.trackWinner && (
-          <WinnerSelect players={game.players} value={winnerId} onChange={setWinnerId} />
-        )}
-
-        <div className="score-grid">
-          {game.players.map((p) => (
-            <ScoreField
-              key={p.id}
-              playerId={p.id}
-              name={p.name}
-              value={scores[p.id] ?? '0'}
-              active={activeField === p.id}
-              onActivate={() => setActiveField(p.id)}
-            />
-          ))}
-        </div>
-
-        {activeField && (
-          <NumericKeypad
-            playerId={activeField}
-            label={game.players.find((p) => p.id === activeField)?.name ?? ''}
-            value={scores[activeField] ?? '0'}
-            onChange={(v) => setScores((prev) => ({ ...prev, [activeField]: v }))}
-            onDone={() => setActiveField(null)}
-          />
-        )}
-
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-            Submit Round ✓
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={resetInputs}>
-            Clear Scores
-          </button>
-        </div>
       </div>
 
       <div className="divider"></div>
@@ -126,13 +139,7 @@ export function RoundsTab({ game, onAddRound, onUndoRound }: RoundsTabProps) {
       <div className="card-title" style={{ marginBottom: 12 }}>
         Round History
       </div>
-      <RoundHistory rounds={game.rounds} players={game.players} />
-
-      {game.rounds.length > 0 && (
-        <button type="button" className="btn btn-danger" onClick={onUndoRound}>
-          ↩ Undo Last Round
-        </button>
-      )}
+      <RoundHistory rounds={game.rounds} players={game.players} onUndoRound={onUndoRound} />
     </div>
   );
 }

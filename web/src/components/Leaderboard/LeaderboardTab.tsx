@@ -5,9 +5,12 @@ import { LeaderboardRow } from './LeaderboardRow';
 import { WormChart } from './WormChart';
 import { ExportImageButton } from '../ExportImageButton';
 
+const RECENT_ROUNDS = 4;
+
 export function LeaderboardTab({ game }: { game: GameRecord }) {
   const captureRef = useRef<HTMLDivElement>(null);
   const { rows } = useLeaderboard(game.players, game.rounds, game.settings.rankDir);
+  const leaderTotal = rows.length ? Math.max(0, ...rows.map((r) => r.total)) : 0;
 
   const title = game.name.trim() || 'LEADERBOARD';
   const roundInfo = `${game.rounds.length} Round${game.rounds.length !== 1 ? 's' : ''} Played`;
@@ -23,8 +26,7 @@ export function LeaderboardTab({ game }: { game: GameRecord }) {
       <div className="toolbar">
         <div className="toolbar-left">
           <div
-            className="round-badge"
-            style={{ fontFamily: "'Bebas Neue'", fontSize: 18, color: 'var(--muted)' }}
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--muted)', letterSpacing: 1 }}
           >
             {roundInfo}
           </div>
@@ -48,21 +50,18 @@ export function LeaderboardTab({ game }: { game: GameRecord }) {
               <p>Submit at least one round to see the leaderboard.</p>
             </div>
           ) : (
-            <table className="lb-table">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Move</th>
-                  <th>Player</th>
-                  <th style={{ textAlign: 'right' }}>Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <LeaderboardRow key={row.player.id} row={row} />
-                ))}
-              </tbody>
-            </table>
+            <div className="lb-list">
+              {rows.map((row) => (
+                <LeaderboardRow
+                  key={row.player.id}
+                  row={row}
+                  leaderTotal={leaderTotal}
+                  recentScores={game.rounds
+                    .slice(-RECENT_ROUNDS)
+                    .map((r) => r.scores[row.player.id] ?? 0)}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>
