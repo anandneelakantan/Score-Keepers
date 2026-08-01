@@ -65,6 +65,7 @@ export function PlayerInputList({ initialPlayers = [], onApply }: PlayerInputLis
                 name={draft.name}
                 colorKey={String(i)}
                 emoji={draft.emoji}
+                size={38}
                 onChange={(emoji) => updateEmoji(i, emoji)}
               />
             ) : (

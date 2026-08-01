@@ -6,10 +6,11 @@ interface AvatarPickerProps {
   name: string;
   colorKey: string;
   emoji?: string;
+  size?: number;
   onChange: (emoji: string | undefined) => void;
 }
 
-export function AvatarPicker({ name, colorKey, emoji, onChange }: AvatarPickerProps) {
+export function AvatarPicker({ name, colorKey, emoji, size = 26, onChange }: AvatarPickerProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -20,7 +21,7 @@ export function AvatarPicker({ name, colorKey, emoji, onChange }: AvatarPickerPr
         aria-label={`Choose avatar for ${name || 'player'}`}
         onClick={() => setOpen((o) => !o)}
       >
-        <PlayerAvatar name={name} colorKey={colorKey} emoji={emoji} size={26} />
+        <PlayerAvatar name={name} colorKey={colorKey} emoji={emoji} size={size} />
       </button>
 
       {open && (
