@@ -12,7 +12,7 @@ test('exports the leaderboard as a downloaded image', async ({ page }) => {
 
   await goToTab(page, 'Leaderboard');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export as Image' }).click();
+  await page.getByRole('button', { name: 'Share' }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('leaderboard_round1.png');
 });
