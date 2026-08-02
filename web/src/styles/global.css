@@ -1209,6 +1209,13 @@ select option { background: var(--surface2); }
   fill: var(--text);
 }
 
+.worm-label-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  fill: var(--muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .worm-path { animation: none; stroke-dashoffset: 0; }
   .worm-point, .worm-label { animation: none; opacity: 1; transform: none; }

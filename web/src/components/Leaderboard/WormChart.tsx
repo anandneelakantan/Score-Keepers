@@ -9,7 +9,7 @@ const PAD_TOP = 20;
 const PAD_BOTTOM = 30;
 const PAD_LEFT_RANK = 24;
 const PAD_LEFT_POINTS = 44;
-const PAD_RIGHT = 120;
+const PAD_RIGHT = 150;
 const DRAW_MS = 900;
 const WOBBLE_AMPLITUDE = 3;
 const MIN_LABEL_GAP = 20;
@@ -58,7 +58,7 @@ function formatSigned(n: number): string {
 export function WormChart({ game }: { game: GameRecord }) {
   const { players, rounds, settings } = game;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [metric, setMetric] = useState<Metric>('rank');
+  const [metric, setMetric] = useState<Metric>('points');
 
   const series = useMemo(
     () => getRankingSeries(players, rounds, settings.rankDir),
@@ -92,7 +92,7 @@ export function WormChart({ game }: { game: GameRecord }) {
     const points = series[player.id];
     const last = points[points.length - 1];
     const y = yFor(last);
-    return { id: player.id, x: xFor(last.round), y, labelY: y };
+    return { id: player.id, x: xFor(last.round), y, labelY: y, total: last.total };
   });
   const orderedByY = [...lastPositions].sort((a, b) => a.labelY - b.labelY);
   for (let i = 1; i < orderedByY.length; i++) {
@@ -115,17 +115,17 @@ export function WormChart({ game }: { game: GameRecord }) {
         <div className="toggle-group worm-metric-toggle">
           <button
             type="button"
-            className={`toggle-btn${metric === 'rank' ? ' active' : ''}`}
-            onClick={() => setMetric('rank')}
-          >
-            Rank
-          </button>
-          <button
-            type="button"
             className={`toggle-btn${metric === 'points' ? ' active' : ''}`}
             onClick={() => setMetric('points')}
           >
             Points
+          </button>
+          <button
+            type="button"
+            className={`toggle-btn${metric === 'rank' ? ' active' : ''}`}
+            onClick={() => setMetric('rank')}
+          >
+            Rank
           </button>
         </div>
       </div>
@@ -230,6 +230,7 @@ export function WormChart({ game }: { game: GameRecord }) {
                           </text>
                           <text x={16} dominantBaseline="central" className="worm-label-name">
                             {player.name}
+                            <tspan className="worm-label-score">{` ${formatSigned(pos.total)}`}</tspan>
                           </text>
                         </g>
                       </>
