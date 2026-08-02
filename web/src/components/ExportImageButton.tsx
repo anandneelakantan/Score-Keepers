@@ -44,19 +44,30 @@ export function ExportImageButton({ captureRef, game }: ExportImageButtonProps) 
         try {
           await navigator.share({ files: [file], title: game.name });
           notify('✓ Shared!');
+          return;
         } catch (err) {
-          if ((err as Error).name !== 'AbortError') notify('Share failed. Try again.');
+          if ((err as Error).name === 'AbortError') return;
+          // Some browsers (e.g. iOS Chrome) report canShare support but fail
+          // when actually sharing — fall through to the download fallback below.
         }
-        return;
       }
 
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = filename;
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-      notify('✓ Image downloaded!');
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        // iOS WebKit (Safari, Chrome, Firefox) ignores the `download` attribute,
+        // so open the image directly and let the user long-press to save it.
+        window.open(url, '_blank');
+        notify('Long-press the image to save it.');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      } else {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        notify('✓ Image downloaded!');
+      }
     } catch {
       notify('Export failed. Try again.');
     }

@@ -45,7 +45,9 @@ export function LeaderboardRow({ row, recentScores, leaderTotal }: LeaderboardRo
   }
 
   const rankClass = rank <= 3 ? String(rank) : 'other';
-  const scoreStr = total >= 0 ? `+${total}` : `${total}`;
+  const isNegative = total < 0;
+  const cleanTotal = Math.round(Math.abs(total) * 1e8) / 1e8;
+  const [scoreInt, scoreDec] = String(cleanTotal).split('.');
   const pct = leaderTotal > 0 ? Math.max(4, Math.min(100, (Math.max(0, total) / leaderTotal) * 100)) : 0;
 
   return (
@@ -81,7 +83,13 @@ export function LeaderboardRow({ row, recentScores, leaderTotal }: LeaderboardRo
           style={{ width: `${pct}%`, '--pa-color': getPlayerColor(player.id) } as CSSProperties}
         />
       </div>
-      <div className="lb-score">{scoreStr}</div>
+      <div className="lb-score">
+        <span className="lb-score-num">
+          {isNegative && <span className="lb-score-sign">-</span>}
+          <span className="lb-score-int">{scoreInt}</span>
+        </span>
+        <span className="lb-score-dec">{scoreDec ? `.${scoreDec}` : ''}</span>
+      </div>
     </div>
   );
 }
