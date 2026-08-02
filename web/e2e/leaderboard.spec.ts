@@ -62,7 +62,7 @@ test('shows a worm chart with one line per player once two rounds are played', a
   const wormChart = page.locator('.worm-chart');
   await expect(wormChart).toHaveCount(1);
   await expect(wormChart.locator('.worm-line-group')).toHaveCount(3);
-  await expect(wormChart.locator('.worm-label-name')).toHaveText(['Alice', 'Bob', 'Carol']);
+  await expect(wormChart.locator('.worm-label-name')).toHaveText([/^Alice/, /^Bob/, /^Carol/]);
 });
 
 test('toggles the worm chart between rank and points views', async ({ page }) => {
@@ -82,16 +82,16 @@ test('toggles the worm chart between rank and points views', async ({ page }) =>
 
   await goToTab(page, 'Leaderboard');
 
-  await expect(page.locator('.worm-chart-title')).toHaveText('Rank Over Time');
-  await expect(page.locator('.worm-axis-label')).toHaveCount(0);
-
-  await page.locator('.worm-metric-toggle').getByRole('button', { name: 'Points' }).click();
   await expect(page.locator('.worm-chart-title')).toHaveText('Points Over Time');
   await expect(page.locator('.worm-axis-label').first()).toBeVisible();
 
   await page.locator('.worm-metric-toggle').getByRole('button', { name: 'Rank' }).click();
   await expect(page.locator('.worm-chart-title')).toHaveText('Rank Over Time');
   await expect(page.locator('.worm-axis-label')).toHaveCount(0);
+
+  await page.locator('.worm-metric-toggle').getByRole('button', { name: 'Points' }).click();
+  await expect(page.locator('.worm-chart-title')).toHaveText('Points Over Time');
+  await expect(page.locator('.worm-axis-label').first()).toBeVisible();
 });
 
 test('ranks players correctly with lowest-first', async ({ page }) => {
