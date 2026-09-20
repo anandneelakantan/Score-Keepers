@@ -111,3 +111,36 @@ test('ranks players correctly with lowest-first', async ({ page }) => {
   await expect(rows.nth(1).locator('.lb-name-text')).toHaveText('Alice');
   await expect(rows.nth(2).locator('.lb-name-text')).toHaveText('Carol');
 });
+
+test('flips the points worm chart so the lowest total sits on top for lowest-first games', async ({ page }) => {
+  await createGame(page, 'Leaderboard Low Worm');
+  await page.getByRole('button', { name: 'Lowest first' }).click();
+  await setPlayers(page, ['Alice', 'Bob', 'Carol']);
+  await goToTab(page, 'Rounds');
+
+  await fillScore(page, 'Alice', '10');
+  await fillScore(page, 'Bob', '5');
+  await fillScore(page, 'Carol', '20');
+  await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+
+  await fillScore(page, 'Alice', '15');
+  await fillScore(page, 'Bob', '1');
+  await fillScore(page, 'Carol', '0');
+  await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+
+  await goToTab(page, 'Leaderboard');
+  await expect(page.locator('.worm-chart-title')).toHaveText('Points Over Time');
+
+  // Bob totals 6 (lowest, rank #1); Alice totals 25 (highest, rank #3).
+  const bestPoint = page
+    .locator('circle.worm-point')
+    .filter({ has: page.locator('title', { hasText: 'Round 2 · Rank #1' }) });
+  const worstPoint = page
+    .locator('circle.worm-point')
+    .filter({ has: page.locator('title', { hasText: 'Round 2 · Rank #3' }) });
+
+  const bestCy = Number(await bestPoint.getAttribute('cy'));
+  const worstCy = Number(await worstPoint.getAttribute('cy'));
+
+  expect(bestCy).toBeLessThan(worstCy);
+});

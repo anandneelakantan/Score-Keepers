@@ -77,10 +77,14 @@ export function WormChart({ game }: { game: GameRecord }) {
   const minTotal = Math.min(0, ...allTotals);
   const maxTotal = Math.max(0, ...allTotals);
   const totalRange = maxTotal - minTotal || 1;
+  // In "lowest first" games the smallest total is the best rank, so the points
+  // axis is flipped to put low totals at the top instead of high totals.
+  const lowestIsBest = settings.rankDir === 'low';
 
   const xFor = (roundIdx: number) => padLeft + roundIdx * COL_GAP;
   const yForRank = (rank: number) => PAD_TOP + (rank - 1) * ROW_GAP;
-  const yForPoints = (total: number) => PAD_TOP + ((maxTotal - total) / totalRange) * chartHeight;
+  const yForPoints = (total: number) =>
+    PAD_TOP + ((lowestIsBest ? total - minTotal : maxTotal - total) / totalRange) * chartHeight;
   const yFor = (pt: RankPoint) => (metric === 'rank' ? yForRank(pt.rank) : yForPoints(pt.total));
 
   const gridRows = Array.from({ length: playerCount }, (_, i) => i);
@@ -143,7 +147,8 @@ export function WormChart({ game }: { game: GameRecord }) {
         >
           {gridRows.map((row) => {
             const y = PAD_TOP + row * ROW_GAP;
-            const value = maxTotal - (row / (playerCount - 1 || 1)) * totalRange;
+            const rowFrac = row / (playerCount - 1 || 1);
+            const value = lowestIsBest ? minTotal + rowFrac * totalRange : maxTotal - rowFrac * totalRange;
             return (
               <g key={row}>
                 <line x1={padLeft} x2={width - PAD_RIGHT} y1={y} y2={y} className="worm-grid-line" />
