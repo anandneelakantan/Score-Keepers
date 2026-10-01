@@ -4,6 +4,9 @@ Scoreboard app to track game scores. Create multiple named games, track players 
 round-by-round scores, and view a ranked leaderboard with medals and rank-change
 indicators. All data is stored locally in the browser (IndexedDB) — there is no backend.
 
+A TV display extension is planned as a read-only, local-network client of this app; see
+[ADR 0001](docs/adr/0001-tv-display-extension.md).
+
 Live app: https://anandneelakantan.github.io/Score-Keepers/
 
 ## Development
