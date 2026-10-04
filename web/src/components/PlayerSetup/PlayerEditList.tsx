@@ -1,7 +1,9 @@
 import { useState, type KeyboardEvent } from 'react';
 import { useToast } from '../../context/ToastContext';
+import { useKnownPlayers } from '../../hooks/useKnownPlayers';
 import type { Player } from '../../storage/types';
 import { AvatarPicker } from './AvatarPicker';
+import { KNOWN_PLAYERS_LIST_ID, KnownPlayerOptions } from './KnownPlayerOptions';
 import { PlayersCardTitle } from './PlayerInputList';
 import { MAX_PLAYERS, validatePlayerName, type PlayerDraft } from './playerNames';
 
@@ -58,6 +60,8 @@ function PlayerRow({ player, index, otherNames, onRename, onSetEmoji }: PlayerRo
         className="player-input"
         type="text"
         placeholder={`Player ${index + 1}`}
+        list={KNOWN_PLAYERS_LIST_ID}
+        autoComplete="off"
         value={value}
         maxLength={20}
         onChange={(e) => setValue(e.target.value)}
@@ -72,6 +76,7 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
   const { notify } = useToast();
   const [newName, setNewName] = useState('');
   const names = players.map((p) => p.name);
+  const { players: knownPlayers, find: findKnownPlayer } = useKnownPlayers();
 
   const commitNew = () => {
     const name = newName.trim();
@@ -84,7 +89,7 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
       notify(error);
       return;
     }
-    onAdd({ name });
+    onAdd({ name, emoji: findKnownPlayer(name)?.emoji });
     setNewName('');
     notify(`✓ ${name} added.`);
   };
@@ -92,6 +97,7 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
   return (
     <div className="card">
       <PlayersCardTitle hint="edits keep scores" />
+      <KnownPlayerOptions players={knownPlayers} exclude={names} />
       <div className="player-grid">
         {players.map((p, i) => (
           <PlayerRow
@@ -110,6 +116,8 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
               className="player-input"
               type="text"
               placeholder={`Player ${players.length + 1}`}
+              list={KNOWN_PLAYERS_LIST_ID}
+              autoComplete="off"
               value={newName}
               maxLength={20}
               onChange={(e) => setNewName(e.target.value)}

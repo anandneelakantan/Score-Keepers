@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resetAppState } from './helpers';
+import { deleteDatabase, resetAppState } from './helpers';
 
 const LEGACY_STATE = {
   rankDir: 'high',
@@ -11,10 +11,8 @@ const LEGACY_STATE = {
 
 test('imports legacy single-game localStorage state on first load, only once', async ({ page }) => {
   await resetAppState(page);
-  await page.evaluate((legacy) => {
-    localStorage.setItem('sb-state', JSON.stringify(legacy));
-    localStorage.removeItem('sb-migrated-v1');
-  }, LEGACY_STATE);
+  await page.evaluate((legacy) => localStorage.setItem('sb-state', JSON.stringify(legacy)), LEGACY_STATE);
+  await deleteDatabase(page); // clears the "already imported" flag set on first load
   await page.reload();
 
   await expect(page.getByTestId('toast')).toContainText(

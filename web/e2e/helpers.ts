@@ -1,16 +1,21 @@
 import type { Page } from '@playwright/test';
 
+export async function deleteDatabase(page: Page) {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        const req = indexedDB.deleteDatabase('scorekeepers');
+        req.onsuccess = () => resolve();
+        req.onerror = () => resolve();
+        req.onblocked = () => resolve();
+      }),
+  );
+}
+
 export async function resetAppState(page: Page) {
   await page.goto('/');
-  await page.evaluate(async () => {
-    localStorage.clear();
-    await new Promise<void>((resolve) => {
-      const req = indexedDB.deleteDatabase('scorekeepers');
-      req.onsuccess = () => resolve();
-      req.onerror = () => resolve();
-      req.onblocked = () => resolve();
-    });
-  });
+  await page.evaluate(() => localStorage.clear());
+  await deleteDatabase(page);
   await page.reload();
 }
 

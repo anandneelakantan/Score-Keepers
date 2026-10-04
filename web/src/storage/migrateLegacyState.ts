@@ -1,7 +1,7 @@
 import { importGame } from './gamesRepository';
+import { getSetting, setSetting } from './settingsRepository';
 import type { GameRecord, Round } from './types';
 
-const MIGRATION_FLAG = 'sb-migrated-v1';
 const LEGACY_STATE_KEY = 'sb-state';
 
 interface LegacyRound {
@@ -23,18 +23,18 @@ interface LegacyState {
  * Returns the imported game's name, or null if there was nothing to import.
  */
 export async function migrateLegacyStateIfNeeded(): Promise<string | null> {
-  if (localStorage.getItem(MIGRATION_FLAG)) return null;
+  if (await getSetting('legacyMigrated')) return null;
 
   try {
     const raw = localStorage.getItem(LEGACY_STATE_KEY);
     if (!raw) {
-      localStorage.setItem(MIGRATION_FLAG, '1');
+      await setSetting('legacyMigrated', true);
       return null;
     }
 
     const legacy: LegacyState = JSON.parse(raw);
     if (!legacy.players?.length) {
-      localStorage.setItem(MIGRATION_FLAG, '1');
+      await setSetting('legacyMigrated', true);
       return null;
     }
 
@@ -72,10 +72,10 @@ export async function migrateLegacyStateIfNeeded(): Promise<string | null> {
     };
 
     await importGame(game);
-    localStorage.setItem(MIGRATION_FLAG, '1');
+    await setSetting('legacyMigrated', true);
     return name;
   } catch {
-    localStorage.setItem(MIGRATION_FLAG, '1');
+    await setSetting('legacyMigrated', true);
     return null;
   }
 }

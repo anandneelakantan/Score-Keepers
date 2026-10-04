@@ -30,3 +30,18 @@ export interface GameRecord {
   rounds: Round[];
   settings: GameSettings;
 }
+
+// A player remembered across games, used to suggest names during setup.
+export interface KnownPlayer {
+  key: string; // lowercased name, so names match case-insensitively
+  name: string;
+  emoji?: string;
+  lastUsed: number;
+}
+
+export type Theme = 'dark' | 'light' | 'auto';
+
+export interface AppSettings {
+  theme: Theme;
+  legacyMigrated: boolean;
+}

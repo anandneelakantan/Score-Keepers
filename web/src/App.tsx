@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, type Theme } from './context/ThemeContext';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { GameProvider, useGames } from './context/GameContext';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
@@ -11,6 +11,7 @@ import { RoundsTab } from './components/Rounds/RoundsTab';
 import { LeaderboardTab } from './components/Leaderboard/LeaderboardTab';
 import { GamePickerScreen } from './components/GamePicker/GamePickerScreen';
 import { useGameState } from './hooks/useGameState';
+import { rememberPlayers } from './storage/playersRepository';
 import './styles/theme.css';
 import './styles/global.css';
 
@@ -56,20 +57,29 @@ function GameShell() {
             onChangeTimerEnabled={(enabled) => dispatch({ type: 'SET_TIMER_ENABLED', enabled })}
             onChangeTimerSeconds={(seconds) => dispatch({ type: 'SET_TIMER_SECONDS', seconds })}
             onChangeWinningPoints={(points) => dispatch({ type: 'SET_WINNING_POINTS', points })}
-            onStartGame={(players) =>
+            onStartGame={(players) => {
+              rememberPlayers(players);
               dispatch({
                 type: 'START_GAME',
                 players: players.map((p) => ({ id: crypto.randomUUID(), name: p.name, emoji: p.emoji })),
-              })
-            }
-            onRenamePlayer={(id, name) => dispatch({ type: 'RENAME_PLAYER', id, name })}
-            onSetPlayerEmoji={(id, emoji) => dispatch({ type: 'SET_PLAYER_EMOJI', id, emoji })}
-            onAddPlayer={(player) =>
+              });
+            }}
+            onRenamePlayer={(id, name) => {
+              rememberPlayers([{ name, emoji: game.players.find((p) => p.id === id)?.emoji }]);
+              dispatch({ type: 'RENAME_PLAYER', id, name });
+            }}
+            onSetPlayerEmoji={(id, emoji) => {
+              const player = game.players.find((p) => p.id === id);
+              if (player && emoji) rememberPlayers([{ name: player.name, emoji }]);
+              dispatch({ type: 'SET_PLAYER_EMOJI', id, emoji });
+            }}
+            onAddPlayer={(player) => {
+              rememberPlayers([player]);
               dispatch({
                 type: 'ADD_PLAYER',
                 player: { id: crypto.randomUUID(), name: player.name, emoji: player.emoji },
-              })
-            }
+              });
+            }}
           />
         )}
         {tab === 'rounds' && (
@@ -111,9 +121,9 @@ function AppShell() {
   );
 }
 
-export default function App() {
+export default function App({ initialTheme }: { initialTheme: Theme }) {
   return (
-    <ThemeProvider>
+    <ThemeProvider initialTheme={initialTheme}>
       <ToastProvider>
         <GameProvider>
           <AppShell />

@@ -1,4 +1,6 @@
+import { useKnownPlayers } from '../../hooks/useKnownPlayers';
 import { AvatarPicker } from './AvatarPicker';
+import { KNOWN_PLAYERS_LIST_ID, KnownPlayerOptions } from './KnownPlayerOptions';
 import { MAX_PLAYERS, type PlayerDraft } from './playerNames';
 
 interface PlayerInputListProps {
@@ -18,9 +20,13 @@ export function PlayersCardTitle({ hint }: { hint?: string }) {
 }
 
 export function PlayerInputList({ drafts, onChange }: PlayerInputListProps) {
+  const { players: knownPlayers, find: findKnownPlayer } = useKnownPlayers();
+
   const updateName = (index: number, value: string) => {
     const next = [...drafts];
-    next[index] = { ...next[index], name: value };
+    // Picking a remembered player brings back their avatar.
+    const emoji = next[index].emoji ?? findKnownPlayer(value)?.emoji;
+    next[index] = { ...next[index], name: value, emoji };
     if (value.trim() && index === next.length - 1 && next.length < MAX_PLAYERS) {
       next.push({ name: '' });
     }
@@ -36,6 +42,7 @@ export function PlayerInputList({ drafts, onChange }: PlayerInputListProps) {
   return (
     <div className="card">
       <PlayersCardTitle />
+      <KnownPlayerOptions players={knownPlayers} exclude={drafts.map((d) => d.name)} />
       <div className="player-grid">
         {drafts.map((draft, i) => (
           <div className="player-input-wrap" key={i}>
@@ -54,6 +61,8 @@ export function PlayerInputList({ drafts, onChange }: PlayerInputListProps) {
               className="player-input"
               type="text"
               placeholder={`Player ${i + 1}`}
+              list={KNOWN_PLAYERS_LIST_ID}
+              autoComplete="off"
               value={draft.name}
               maxLength={20}
               onChange={(e) => updateName(i, e.target.value)}

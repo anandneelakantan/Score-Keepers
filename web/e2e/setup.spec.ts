@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { resetAppState, createGame, setPlayers, goToTab, fillScore } from './helpers';
 
 test.beforeEach(async ({ page }) => {
@@ -105,5 +105,24 @@ test.describe('editing players mid-game', () => {
     await alice.press('Enter');
     await expect(page.getByTestId('toast')).toContainText('Player name cannot be empty.');
     await expect(alice).toHaveValue('Alice');
+  });
+});
+
+test.describe('remembered players', () => {
+  const suggestions = (page: Page) =>
+    page.locator('#known-players option').evaluateAll((opts) =>
+      opts.map((o) => (o as HTMLOptionElement).value),
+    );
+
+  test('suggests players from earlier games, excluding names already entered', async ({ page }) => {
+    await createGame(page, 'First Game');
+    await setPlayers(page, ['Alice', 'Bob']);
+    await page.getByRole('button', { name: 'My Games' }).click();
+
+    await createGame(page, 'Second Game');
+    await expect.poll(async () => (await suggestions(page)).sort()).toEqual(['Alice', 'Bob']);
+
+    await page.getByPlaceholder('Player 1').fill('Bob');
+    await expect.poll(() => suggestions(page)).toEqual(['Alice']);
   });
 });

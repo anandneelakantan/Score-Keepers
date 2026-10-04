@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { setSetting } from '../storage/settingsRepository';
+import type { Theme } from '../storage/types';
 
-export type Theme = 'dark' | 'light' | 'auto';
+export type { Theme };
 
 interface ThemeContextValue {
   theme: Theme;
@@ -10,20 +12,8 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'sb-theme';
-
-function readStoredTheme(): Theme {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === 'dark' || saved === 'light' || saved === 'auto') return saved;
-  } catch {
-    // localStorage unavailable
-  }
-  return 'auto';
-}
-
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
+export function ThemeProvider({ initialTheme, children }: { initialTheme: Theme; children: ReactNode }) {
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -31,11 +21,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    try {
-      localStorage.setItem(STORAGE_KEY, t);
-    } catch {
-      // localStorage unavailable
-    }
+    setSetting('theme', t).catch(() => {
+      // IndexedDB unavailable
+    });
   };
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
