@@ -10,6 +10,7 @@ type Action =
   | { type: 'SET_TRACK_WINNER'; enabled: boolean }
   | { type: 'SET_TIMER_ENABLED'; enabled: boolean }
   | { type: 'SET_TIMER_SECONDS'; seconds: number }
+  | { type: 'SET_WINNING_POINTS'; points: number | undefined }
   | { type: 'APPLY_PLAYERS'; players: Player[] }
   | { type: 'ADD_ROUND'; round: Round }
   | { type: 'UNDO_ROUND' };
@@ -41,6 +42,8 @@ function reducer(game: GameRecord | null, action: Action): GameRecord | null {
         ...game,
         settings: { ...game.settings, timer: { ...game.settings.timer, seconds: action.seconds } },
       };
+    case 'SET_WINNING_POINTS':
+      return { ...game, settings: { ...game.settings, winningPoints: action.points } };
     case 'APPLY_PLAYERS':
       return { ...game, players: action.players, rounds: [] };
     case 'ADD_ROUND':

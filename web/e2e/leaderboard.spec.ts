@@ -144,3 +144,71 @@ test('flips the points worm chart so the lowest total sits on top for lowest-fir
 
   expect(bestCy).toBeLessThan(worstCy);
 });
+
+test('draws the winning points target on the points chart', async ({ page }) => {
+  await createGame(page, 'Leaderboard Target');
+  await page.getByLabel('Winning points').fill('100');
+  await setPlayers(page, ['Alice', 'Bob', 'Carol']);
+  await goToTab(page, 'Rounds');
+
+  await fillScore(page, 'Alice', '10');
+  await fillScore(page, 'Bob', '5');
+  await fillScore(page, 'Carol', '20');
+  await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+
+  await fillScore(page, 'Alice', '15');
+  await fillScore(page, 'Bob', '1');
+  await fillScore(page, 'Carol', '0');
+  await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+
+  await goToTab(page, 'Leaderboard');
+  await expect(page.locator('.worm-target-label')).toHaveText('🏁 100');
+
+  // The target (100) exceeds every total, so its line sits above the leader's point.
+  const targetY = Number(await page.locator('.worm-target-line').getAttribute('y1'));
+  const leaderCy = Number(
+    await page
+      .locator('circle.worm-point')
+      .filter({ has: page.locator('title', { hasText: 'Round 2 · Rank #1' }) })
+      .getAttribute('cy'),
+  );
+  expect(targetY).toBeLessThan(leaderCy);
+
+  await page.locator('.worm-metric-toggle').getByRole('button', { name: 'Rank' }).click();
+  await expect(page.locator('.worm-target')).toHaveCount(0);
+});
+
+test('omits the target line when no winning points are set', async ({ page }) => {
+  await createGame(page, 'Leaderboard No Target');
+  await setPlayers(page, ['Alice', 'Bob']);
+  await goToTab(page, 'Rounds');
+
+  for (const [a, b] of [['10', '5'], ['3', '8']]) {
+    await fillScore(page, 'Alice', a);
+    await fillScore(page, 'Bob', b);
+    await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+  }
+
+  await goToTab(page, 'Leaderboard');
+  await expect(page.locator('.worm-chart')).toHaveCount(1);
+  await expect(page.locator('.worm-target')).toHaveCount(0);
+});
+
+test('hides winning points for lowest-first games', async ({ page }) => {
+  await createGame(page, 'Leaderboard Low Target');
+  await page.getByLabel('Winning points').fill('100');
+  await setPlayers(page, ['Alice', 'Bob']);
+  await page.getByRole('button', { name: 'Lowest first' }).click();
+  await expect(page.getByLabel('Winning points')).toHaveCount(0);
+  await goToTab(page, 'Rounds');
+
+  for (const [a, b] of [['10', '5'], ['3', '8']]) {
+    await fillScore(page, 'Alice', a);
+    await fillScore(page, 'Bob', b);
+    await page.getByRole('button', { name: 'Submit Round ✓' }).click();
+  }
+
+  await goToTab(page, 'Leaderboard');
+  await expect(page.locator('.worm-chart')).toHaveCount(1);
+  await expect(page.locator('.worm-target')).toHaveCount(0);
+});

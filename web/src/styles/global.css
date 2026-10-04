@@ -1143,6 +1143,23 @@ select option { background: var(--surface2); }
   fill: var(--muted);
 }
 
+.worm-target-line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.worm-target-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+.winning-points-input {
+  max-width: 120px;
+}
+
 .worm-label-connector {
   stroke-width: 1;
   opacity: 0.45;

@@ -73,9 +73,13 @@ export function WormChart({ game }: { game: GameRecord }) {
   const chartHeight = (playerCount - 1) * ROW_GAP;
   const height = PAD_TOP + PAD_BOTTOM + chartHeight;
 
+  // A winning target only makes sense when the highest total wins.
+  const target = settings.rankDir === 'high' ? settings.winningPoints : undefined;
   const allTotals = players.flatMap((p) => series[p.id].map((pt) => pt.total));
-  const minTotal = Math.min(0, ...allTotals);
-  const maxTotal = Math.max(0, ...allTotals);
+  // Include the winning target in the axis range so its finish line is always on-screen.
+  const axisValues = target === undefined ? allTotals : [...allTotals, target];
+  const minTotal = Math.min(0, ...axisValues);
+  const maxTotal = Math.max(0, ...axisValues);
   const totalRange = maxTotal - minTotal || 1;
   // In "lowest first" games the smallest total is the best rank, so the points
   // axis is flipped to put low totals at the top instead of high totals.
@@ -142,7 +146,9 @@ export function WormChart({ game }: { game: GameRecord }) {
           aria-label={
             metric === 'rank'
               ? "Chart showing each player's rank after every round"
-              : "Chart showing each player's total points after every round"
+              : `Chart showing each player's total points after every round${
+                  target !== undefined ? `, with the winning target of ${target} points` : ''
+                }`
           }
         >
           {gridRows.map((row) => {
@@ -160,6 +166,26 @@ export function WormChart({ game }: { game: GameRecord }) {
               </g>
             );
           })}
+
+          {metric === 'points' && target !== undefined && (
+            <g className="worm-target">
+              <line
+                x1={padLeft}
+                x2={width - PAD_RIGHT}
+                y1={yForPoints(target)}
+                y2={yForPoints(target)}
+                className="worm-target-line"
+              />
+              <text
+                x={padLeft + 4}
+                y={yForPoints(target) - 5}
+                className="worm-target-label"
+                dominantBaseline="auto"
+              >
+                {`🏁 ${target}`}
+              </text>
+            </g>
+          )}
 
           {Array.from({ length: rounds.length + 1 }, (_, i) => i).map((i) => (
             <text key={i} x={xFor(i)} y={height - 10} className="worm-round-label" textAnchor="middle">

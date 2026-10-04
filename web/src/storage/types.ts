@@ -18,6 +18,7 @@ export interface GameSettings {
   rankDir: 'high' | 'low';
   trackWinner: boolean;
   timer: TimerSettings;
+  winningPoints?: number; // total a player must reach to win; unset means no target
 }
 
 export interface GameRecord {

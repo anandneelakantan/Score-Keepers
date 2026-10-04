@@ -55,6 +55,7 @@ function GameShell() {
             onChangeTrackWinner={(enabled) => dispatch({ type: 'SET_TRACK_WINNER', enabled })}
             onChangeTimerEnabled={(enabled) => dispatch({ type: 'SET_TIMER_ENABLED', enabled })}
             onChangeTimerSeconds={(seconds) => dispatch({ type: 'SET_TIMER_SECONDS', seconds })}
+            onChangeWinningPoints={(points) => dispatch({ type: 'SET_WINNING_POINTS', points })}
             onApplyPlayers={(players) =>
               dispatch({
                 type: 'APPLY_PLAYERS',

@@ -11,6 +11,7 @@ interface PlayerSetupProps {
   onChangeTrackWinner: (enabled: boolean) => void;
   onChangeTimerEnabled: (enabled: boolean) => void;
   onChangeTimerSeconds: (seconds: number) => void;
+  onChangeWinningPoints: (points: number | undefined) => void;
   onApplyPlayers: (players: PlayerDraft[]) => void;
 }
 
@@ -21,6 +22,7 @@ export function PlayerSetup({
   onChangeTrackWinner,
   onChangeTimerEnabled,
   onChangeTimerSeconds,
+  onChangeWinningPoints,
   onApplyPlayers,
 }: PlayerSetupProps) {
   const { notify } = useToast();
@@ -77,6 +79,27 @@ export function PlayerSetup({
           </div>
         </div>
       </div>
+
+      {game.settings.rankDir === 'high' && (
+        <div className="card">
+          <div className="card-title">Winning points</div>
+          <div className="settings-row">
+            <span className="setting-label">Target total</span>
+            <input
+              className="player-input winning-points-input"
+              type="number"
+              inputMode="numeric"
+              placeholder="None"
+              aria-label="Winning points"
+              value={game.settings.winningPoints ?? ''}
+              onChange={(e) => {
+                const value = Number.parseInt(e.target.value, 10);
+                onChangeWinningPoints(Number.isNaN(value) ? undefined : value);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-title">Round winner</div>
