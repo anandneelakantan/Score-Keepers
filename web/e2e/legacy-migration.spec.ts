@@ -25,7 +25,7 @@ test('imports legacy single-game localStorage state on first load, only once', a
     .filter({ hasText: 'Legacy Game' })
     .getByRole('button', { name: 'Open' })
     .click();
-  await expect(page.locator('.player-input').first()).toHaveValue('Legacy Game');
+  await expect(page.getByLabel('Game name')).toHaveValue('Legacy Game');
 
   await page.reload();
   await expect(page.getByTestId('game-list-item')).toHaveCount(1);

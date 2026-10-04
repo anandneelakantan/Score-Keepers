@@ -1,5 +1,8 @@
 import type { Page } from '@playwright/test';
 
+// The label includes the player count, e.g. "Start game · 3 players →".
+export const START_BUTTON = /^Start game/;
+
 export async function deleteDatabase(page: Page) {
   await page.evaluate(
     () =>
@@ -44,9 +47,11 @@ export async function createGame(page: Page, name: string) {
 
 export async function setPlayers(page: Page, names: string[]) {
   for (let i = 0; i < names.length; i++) {
+    // New games start with two rows; later rows come from "Add player".
+    if (i >= 2) await page.getByRole('button', { name: 'Add player' }).click();
     await page.getByPlaceholder(`Player ${i + 1}`).fill(names[i]);
   }
-  await page.getByRole('button', { name: 'Start game →' }).click();
+  await page.getByRole('button', { name: START_BUTTON }).click();
 }
 
 export async function goToTab(page: Page, label: 'Game setup' | 'Rounds' | 'Leaderboard') {

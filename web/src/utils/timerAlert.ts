@@ -41,3 +41,7 @@ export function playTickBeep() {
 export function playCompletionBeep() {
   tone(660, 3, 0.25);
 }
+
+// Short label for a round length preset, e.g. "90s" or "2m".
+export const formatTimerSeconds = (secs: number) =>
+  secs >= 120 && secs % 60 === 0 ? `${secs / 60}m` : `${secs}s`;

@@ -1,11 +1,11 @@
 import { useState, type KeyboardEvent } from 'react';
 import { useToast } from '../../context/ToastContext';
 import { useKnownPlayers } from '../../hooks/useKnownPlayers';
-import type { Player } from '../../storage/types';
+import type { KnownPlayer, Player } from '../../storage/types';
 import { AvatarPicker } from './AvatarPicker';
 import { KNOWN_PLAYERS_LIST_ID, KnownPlayerOptions } from './KnownPlayerOptions';
-import { PlayersCardTitle } from './PlayerInputList';
 import { MAX_PLAYERS, validatePlayerName, type PlayerDraft } from './playerNames';
+import { RecentPlayers } from './RecentPlayers';
 
 interface PlayerEditListProps {
   players: Player[];
@@ -48,18 +48,19 @@ function PlayerRow({ player, index, otherNames, onRename, onSetEmoji }: PlayerRo
   };
 
   return (
-    <div className="player-input-wrap">
+    <div className="setup-player-row">
       <AvatarPicker
         name={player.name}
         colorKey={player.id}
         emoji={player.emoji}
-        size={38}
+        size={36}
         onChange={onSetEmoji}
       />
       <input
-        className="player-input"
+        className="setup-name-input"
         type="text"
         placeholder={`Player ${index + 1}`}
+        aria-label={`Player ${index + 1} name`}
         list={KNOWN_PLAYERS_LIST_ID}
         autoComplete="off"
         value={value}
@@ -77,28 +78,30 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
   const [newName, setNewName] = useState('');
   const names = players.map((p) => p.name);
   const { players: knownPlayers, find: findKnownPlayer } = useKnownPlayers();
+  const full = players.length >= MAX_PLAYERS;
+
+  const add = (player: PlayerDraft) => {
+    const error = validatePlayerName(player.name, names);
+    if (error) {
+      notify(error);
+      return false;
+    }
+    onAdd(player);
+    notify(`✓ ${player.name} added.`);
+    return true;
+  };
 
   const commitNew = () => {
     const name = newName.trim();
-    if (!name) {
-      setNewName('');
-      return;
-    }
-    const error = validatePlayerName(name, names);
-    if (error) {
-      notify(error);
-      return;
-    }
-    onAdd({ name, emoji: findKnownPlayer(name)?.emoji });
-    setNewName('');
-    notify(`✓ ${name} added.`);
+    if (!name || add({ name, emoji: findKnownPlayer(name)?.emoji })) setNewName('');
   };
 
+  const addKnown = (player: KnownPlayer) => add({ name: player.name, emoji: player.emoji });
+
   return (
-    <div className="card">
-      <PlayersCardTitle hint="edits keep scores" />
-      <KnownPlayerOptions players={knownPlayers} exclude={names} />
-      <div className="player-grid">
+    <>
+      <div className="setup-card">
+        <KnownPlayerOptions players={knownPlayers} exclude={names} />
         {players.map((p, i) => (
           <PlayerRow
             key={p.id}
@@ -109,13 +112,14 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
             onSetEmoji={(emoji) => onSetEmoji(p.id, emoji)}
           />
         ))}
-        {players.length < MAX_PLAYERS && (
-          <div className="player-input-wrap">
-            <span className="player-avatar player-avatar-empty">{players.length + 1}</span>
+        {!full && (
+          <div className="setup-player-row setup-add-row">
+            <span className="setup-add-icon">＋</span>
             <input
-              className="player-input"
+              className="setup-name-input"
               type="text"
-              placeholder={`Player ${players.length + 1}`}
+              placeholder="Add a late joiner"
+              aria-label="New player name"
               list={KNOWN_PLAYERS_LIST_ID}
               autoComplete="off"
               value={newName}
@@ -127,6 +131,7 @@ export function PlayerEditList({ players, onRename, onSetEmoji, onAdd }: PlayerE
           </div>
         )}
       </div>
-    </div>
+      {!full && <RecentPlayers players={knownPlayers} exclude={names} onPick={addKnown} />}
+    </>
   );
 }

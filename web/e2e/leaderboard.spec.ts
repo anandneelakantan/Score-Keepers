@@ -96,7 +96,7 @@ test('toggles the worm chart between rank and points views', async ({ page }) =>
 
 test('ranks players correctly with lowest-first', async ({ page }) => {
   await createGame(page, 'Leaderboard Low');
-  await page.getByRole('button', { name: 'Lowest first' }).click();
+  await page.getByRole('button', { name: 'Lowest' }).click();
   await setPlayers(page, ['Alice', 'Bob', 'Carol']);
   await goToTab(page, 'Rounds');
 
@@ -114,7 +114,7 @@ test('ranks players correctly with lowest-first', async ({ page }) => {
 
 test('flips the points worm chart so the lowest total sits on top for lowest-first games', async ({ page }) => {
   await createGame(page, 'Leaderboard Low Worm');
-  await page.getByRole('button', { name: 'Lowest first' }).click();
+  await page.getByRole('button', { name: 'Lowest' }).click();
   await setPlayers(page, ['Alice', 'Bob', 'Carol']);
   await goToTab(page, 'Rounds');
 
@@ -194,12 +194,12 @@ test('omits the target line when no winning points are set', async ({ page }) =>
   await expect(page.locator('.worm-target')).toHaveCount(0);
 });
 
-test('hides winning points for lowest-first games', async ({ page }) => {
+test('disables winning points for lowest-first games', async ({ page }) => {
   await createGame(page, 'Leaderboard Low Target');
   await page.getByLabel('Winning points').fill('100');
   await setPlayers(page, ['Alice', 'Bob']);
-  await page.getByRole('button', { name: 'Lowest first' }).click();
-  await expect(page.getByLabel('Winning points')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Lowest' }).click();
+  await expect(page.getByLabel('Winning points')).toBeDisabled();
   await goToTab(page, 'Rounds');
 
   for (const [a, b] of [['10', '5'], ['3', '8']]) {
