@@ -7,8 +7,26 @@ export async function deleteDatabase(page: Page) {
         const req = indexedDB.deleteDatabase('scorekeepers');
         req.onsuccess = () => resolve();
         req.onerror = () => resolve();
-        req.onblocked = () => resolve();
       }),
+  );
+}
+
+export async function getStoredSetting(page: Page, key: string) {
+  return page.evaluate(
+    (k) =>
+      new Promise<unknown>((resolve, reject) => {
+        const req = indexedDB.open('scorekeepers');
+        req.onsuccess = () => {
+          const get = req.result.transaction('settings').objectStore('settings').get(k);
+          get.onsuccess = () => {
+            req.result.close();
+            resolve(get.result);
+          };
+          get.onerror = () => reject(get.error);
+        };
+        req.onerror = () => reject(req.error);
+      }),
+    key,
   );
 }
 

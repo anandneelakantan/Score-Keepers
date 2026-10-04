@@ -50,6 +50,11 @@ export function getDb(): Promise<IDBPDatabase<ScoreKeepersDB>> {
           await seedPlayersFromGames(tx);
         }
       },
+      // Step aside when another connection deletes or upgrades the database (e.g. a newer tab); reopen on next use.
+      blocking() {
+        dbPromise?.then((db) => db.close());
+        dbPromise = null;
+      },
     });
   }
   return dbPromise;
