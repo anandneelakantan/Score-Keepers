@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { useToast } from '../../context/ToastContext';
 import type { GameRecord, GameSettings } from '../../storage/types';
-import { PlayerInputList, type PlayerDraft } from './PlayerInputList';
+import { PlayerEditList } from './PlayerEditList';
+import { PlayerInputList } from './PlayerInputList';
+import { validatePlayerName, type PlayerDraft } from './playerNames';
 
 const TIMER_PRESETS = [30, 60, 90, 120];
 
@@ -12,7 +15,10 @@ interface PlayerSetupProps {
   onChangeTimerEnabled: (enabled: boolean) => void;
   onChangeTimerSeconds: (seconds: number) => void;
   onChangeWinningPoints: (points: number | undefined) => void;
-  onApplyPlayers: (players: PlayerDraft[]) => void;
+  onStartGame: (players: PlayerDraft[]) => void;
+  onRenamePlayer: (id: string, name: string) => void;
+  onSetPlayerEmoji: (id: string, emoji: string | undefined) => void;
+  onAddPlayer: (player: PlayerDraft) => void;
 }
 
 export function PlayerSetup({
@@ -23,22 +29,32 @@ export function PlayerSetup({
   onChangeTimerEnabled,
   onChangeTimerSeconds,
   onChangeWinningPoints,
-  onApplyPlayers,
+  onStartGame,
+  onRenamePlayer,
+  onSetPlayerEmoji,
+  onAddPlayer,
 }: PlayerSetupProps) {
   const { notify } = useToast();
+  const inProgress = game.players.length > 0;
+  const [drafts, setDrafts] = useState<PlayerDraft[]>([{ name: '' }]);
 
-  const handleApply = (players: PlayerDraft[]) => {
+  const handleStart = () => {
+    const players = drafts
+      .map((d) => ({ name: d.name.trim(), emoji: d.emoji }))
+      .filter((d) => d.name);
     if (players.length < 2) {
       notify('Add at least 2 players.');
       return;
     }
-    const unique = new Set(players.map((p) => p.name.toLowerCase()));
-    if (unique.size !== players.length) {
-      notify('Player names must be unique.');
+    const error = players
+      .map((p, i) => validatePlayerName(p.name, players.slice(0, i).map((q) => q.name)))
+      .find(Boolean);
+    if (error) {
+      notify(error);
       return;
     }
-    onApplyPlayers(players);
-    notify(`✓ ${players.length} players set. Rounds reset.`);
+    onStartGame(players);
+    notify(`✓ Game started with ${players.length} players.`);
   };
 
   return (
@@ -148,11 +164,21 @@ export function PlayerSetup({
         )}
       </div>
 
-      <PlayerInputList
-        key={game.id}
-        initialPlayers={game.players.map((p) => ({ name: p.name, emoji: p.emoji }))}
-        onApply={handleApply}
-      />
+      {inProgress ? (
+        <PlayerEditList
+          players={game.players}
+          onRename={onRenamePlayer}
+          onSetEmoji={onSetPlayerEmoji}
+          onAdd={onAddPlayer}
+        />
+      ) : (
+        <>
+          <PlayerInputList drafts={drafts} onChange={setDrafts} />
+          <button type="button" className="btn btn-primary" onClick={handleStart}>
+            Start game →
+          </button>
+        </>
+      )}
     </div>
   );
 }

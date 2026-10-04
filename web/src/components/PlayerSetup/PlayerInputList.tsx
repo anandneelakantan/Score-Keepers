@@ -1,64 +1,43 @@
-import { useState } from 'react';
 import { AvatarPicker } from './AvatarPicker';
-
-export interface PlayerDraft {
-  name: string;
-  emoji?: string;
-}
+import { MAX_PLAYERS, type PlayerDraft } from './playerNames';
 
 interface PlayerInputListProps {
-  initialPlayers?: PlayerDraft[];
-  onApply: (players: PlayerDraft[]) => void;
+  drafts: PlayerDraft[];
+  onChange: (drafts: PlayerDraft[]) => void;
 }
 
-const MAX_PLAYERS = 20;
-
-function buildInitialInputs(initialPlayers: PlayerDraft[]): PlayerDraft[] {
-  if (initialPlayers.length === 0) return [{ name: '' }];
-  if (initialPlayers.length < MAX_PLAYERS) return [...initialPlayers, { name: '' }];
-  return [...initialPlayers];
+export function PlayersCardTitle({ hint }: { hint?: string }) {
+  return (
+    <div className="card-title">
+      Players{' '}
+      <span style={{ color: 'var(--muted)', fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}>
+        (up to {MAX_PLAYERS}){hint ? ` · ${hint}` : ''}
+      </span>
+    </div>
+  );
 }
 
-export function PlayerInputList({ initialPlayers = [], onApply }: PlayerInputListProps) {
-  const [inputs, setInputs] = useState<PlayerDraft[]>(() => buildInitialInputs(initialPlayers));
-
+export function PlayerInputList({ drafts, onChange }: PlayerInputListProps) {
   const updateName = (index: number, value: string) => {
-    setInputs((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], name: value };
-      if (value.trim() && index === next.length - 1 && next.length < MAX_PLAYERS) {
-        next.push({ name: '' });
-      }
-      return next;
-    });
+    const next = [...drafts];
+    next[index] = { ...next[index], name: value };
+    if (value.trim() && index === next.length - 1 && next.length < MAX_PLAYERS) {
+      next.push({ name: '' });
+    }
+    onChange(next);
   };
 
   const updateEmoji = (index: number, emoji: string | undefined) => {
-    setInputs((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], emoji };
-      return next;
-    });
-  };
-
-  const handleApply = () => {
-    onApply(
-      inputs
-        .map((d) => ({ name: d.name.trim(), emoji: d.emoji }))
-        .filter((d) => d.name),
-    );
+    const next = [...drafts];
+    next[index] = { ...next[index], emoji };
+    onChange(next);
   };
 
   return (
     <div className="card">
-      <div className="card-title">
-        Players{' '}
-        <span style={{ color: 'var(--muted)', fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}>
-          (up to {MAX_PLAYERS})
-        </span>
-      </div>
+      <PlayersCardTitle />
       <div className="player-grid">
-        {inputs.map((draft, i) => (
+        {drafts.map((draft, i) => (
           <div className="player-input-wrap" key={i}>
             {draft.name.trim() ? (
               <AvatarPicker
@@ -81,11 +60,6 @@ export function PlayerInputList({ initialPlayers = [], onApply }: PlayerInputLis
             />
           </div>
         ))}
-      </div>
-      <div style={{ marginTop: 16 }}>
-        <button type="button" className="btn btn-primary" onClick={handleApply}>
-          Apply Players →
-        </button>
       </div>
     </div>
   );

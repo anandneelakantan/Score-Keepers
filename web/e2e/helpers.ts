@@ -23,7 +23,7 @@ export async function setPlayers(page: Page, names: string[]) {
   for (let i = 0; i < names.length; i++) {
     await page.getByPlaceholder(`Player ${i + 1}`).fill(names[i]);
   }
-  await page.getByRole('button', { name: 'Apply Players →' }).click();
+  await page.getByRole('button', { name: 'Start game →' }).click();
 }
 
 export async function goToTab(page: Page, label: 'Game setup' | 'Rounds' | 'Leaderboard') {

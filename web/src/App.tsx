@@ -56,10 +56,18 @@ function GameShell() {
             onChangeTimerEnabled={(enabled) => dispatch({ type: 'SET_TIMER_ENABLED', enabled })}
             onChangeTimerSeconds={(seconds) => dispatch({ type: 'SET_TIMER_SECONDS', seconds })}
             onChangeWinningPoints={(points) => dispatch({ type: 'SET_WINNING_POINTS', points })}
-            onApplyPlayers={(players) =>
+            onStartGame={(players) =>
               dispatch({
-                type: 'APPLY_PLAYERS',
+                type: 'START_GAME',
                 players: players.map((p) => ({ id: crypto.randomUUID(), name: p.name, emoji: p.emoji })),
+              })
+            }
+            onRenamePlayer={(id, name) => dispatch({ type: 'RENAME_PLAYER', id, name })}
+            onSetPlayerEmoji={(id, emoji) => dispatch({ type: 'SET_PLAYER_EMOJI', id, emoji })}
+            onAddPlayer={(player) =>
+              dispatch({
+                type: 'ADD_PLAYER',
+                player: { id: crypto.randomUUID(), name: player.name, emoji: player.emoji },
               })
             }
           />

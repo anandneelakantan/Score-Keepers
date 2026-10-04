@@ -11,7 +11,10 @@ type Action =
   | { type: 'SET_TIMER_ENABLED'; enabled: boolean }
   | { type: 'SET_TIMER_SECONDS'; seconds: number }
   | { type: 'SET_WINNING_POINTS'; points: number | undefined }
-  | { type: 'APPLY_PLAYERS'; players: Player[] }
+  | { type: 'START_GAME'; players: Player[] }
+  | { type: 'RENAME_PLAYER'; id: string; name: string }
+  | { type: 'SET_PLAYER_EMOJI'; id: string; emoji: string | undefined }
+  | { type: 'ADD_PLAYER'; player: Player }
   | { type: 'ADD_ROUND'; round: Round }
   | { type: 'UNDO_ROUND' };
 
@@ -44,8 +47,20 @@ function reducer(game: GameRecord | null, action: Action): GameRecord | null {
       };
     case 'SET_WINNING_POINTS':
       return { ...game, settings: { ...game.settings, winningPoints: action.points } };
-    case 'APPLY_PLAYERS':
+    case 'START_GAME':
       return { ...game, players: action.players, rounds: [] };
+    case 'RENAME_PLAYER':
+      return {
+        ...game,
+        players: game.players.map((p) => (p.id === action.id ? { ...p, name: action.name } : p)),
+      };
+    case 'SET_PLAYER_EMOJI':
+      return {
+        ...game,
+        players: game.players.map((p) => (p.id === action.id ? { ...p, emoji: action.emoji } : p)),
+      };
+    case 'ADD_PLAYER':
+      return { ...game, players: [...game.players, action.player] };
     case 'ADD_ROUND':
       return { ...game, rounds: [...game.rounds, action.round] };
     case 'UNDO_ROUND':
