@@ -38,10 +38,7 @@ test('disabling winner tracking clears winner badges from history', async ({ pag
   await expect(page.getByText('🏅 Alice')).toBeVisible();
 
   await goToTab(page, 'Game setup');
-  // The native checkbox is visually hidden behind a custom slider (see .toggle-slider
-  // in global.css), so a real click is intercepted by the slider; force it like a user
-  // clicking the slider would.
-  await page.getByLabel('Track round winner').click({ force: true });
+  await page.getByLabel('Track round winner').click();
   await goToTab(page, 'Rounds');
   await expect(page.getByText('🏅 Alice')).toHaveCount(0);
 });

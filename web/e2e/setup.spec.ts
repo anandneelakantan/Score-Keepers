@@ -59,7 +59,7 @@ test('summarises the setup under the game name', async ({ page }) => {
   await createGame(page, 'Summary Test');
   await page.getByPlaceholder('Player 1').fill('Alice');
   await page.getByLabel('Winning points').fill('300');
-  await page.getByLabel('Time each round').check({ force: true });
+  await page.getByLabel('Time each round').check();
   await page.getByRole('button', { name: '90s' }).click();
   await expect(page.locator('.setup-summary')).toHaveText(/1 player.*Highest wins.*Play to 300.*90s rounds/);
 });

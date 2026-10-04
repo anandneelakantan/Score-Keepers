@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { deleteDatabase, resetAppState } from './helpers';
 
 const LEGACY_STATE = {
   rankDir: 'high',
@@ -10,10 +9,13 @@ const LEGACY_STATE = {
 };
 
 test('imports legacy single-game localStorage state on first load, only once', async ({ page }) => {
-  await resetAppState(page);
-  await page.evaluate((legacy) => localStorage.setItem('sb-state', JSON.stringify(legacy)), LEGACY_STATE);
-  await deleteDatabase(page); // clears the "already imported" flag set on first load
-  await page.reload();
+  // Seed before the app's first load: each test starts with an empty browser profile, so the
+  // first load sees the legacy blob with no database yet. Clearing state after the app has
+  // started races its startup, which can import the game before the reload.
+  await page.addInitScript((legacy) => {
+    localStorage.setItem('sb-state', JSON.stringify(legacy));
+  }, LEGACY_STATE);
+  await page.goto('/');
 
   await expect(page.getByTestId('toast')).toContainText(
     'Imported your previous scoreboard as "Legacy Game"',
